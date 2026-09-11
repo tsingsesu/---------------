@@ -103,11 +103,11 @@ def solve_seg(price, load, pv, e0, x_ref=None):
     vals.append(np.concatenate([-ETA * np.ones(len(tr)), np.ones(len(tr)) / ETA]))
     b_ub = np.concatenate([b_ub, np.full(n, e0 - EMIN)])
     if marg:
-        # t⁺_k − y_k ≤ −x_ref_k
+        # t⁺_k ≥ y_k − x_ref_k（正确形式；2026-09-11 修正，原版把符号写反成 y ≥ x_ref + t⁺）
         rows.append(np.concatenate([3 * n + ar, 3 * n + ar]))
         cols.append(np.concatenate([3 * n + ar, ar]))
-        vals.append(np.concatenate([np.ones(n), -np.ones(n)]))
-        b_ub = np.concatenate([b_ub, -x_ref])
+        vals.append(np.concatenate([-np.ones(n), np.ones(n)]))
+        b_ub = np.concatenate([b_ub, x_ref])
         c = np.concatenate([0.5 * price, np.zeros(2 * n), price])
     else:
         c = np.concatenate([price, np.zeros(2 * n)])
