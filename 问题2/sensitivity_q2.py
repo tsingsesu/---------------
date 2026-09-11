@@ -668,16 +668,21 @@ def run_s5(price, load, pv_actual, base):
                  "只改模板落位、不改物理解；2025-02-01 两填法逐格最大差 %.4f kWh（整体错位一格）"
                  % diff_shift])
     # (e) 表 1 六时段的填法 Y/X 逐值对照（四个指定日期；供论文表注量化填法影响）
+    #
+    # 索引口径（与 D-01、问题 1 的 S5 填法对照完全一致）：
+    #   模板标签 ``H:00-H:10`` 所在列是 0 基第 6H-1 列（如 12:00-12:10 是第 71 列）；
+    #   填法 Y（已定）：该列装当天第 6H+1 个时段（0 基 idx = 6H），即表 1 的正式取值；
+    #   填法 X（对照）：该列装当天第 6H 个时段（0 基 idx = 6H-1），即模板整体少轮转一格。
     import datetime as _dt
     spec_rows = [["日期", "时段", "真实时段序号", "填法Y购电量_kWh", "填法X购电量_kWh", "差_kWh"]]
     for t in ("2025-03-20", "2025-06-21", "2025-09-23", "2025-12-21"):
         d0 = (_dt.date.fromisoformat(t) - _dt.date(2025, 1, 1)).days
-        xd = base["roll"]["x_plan"][d0 - D_REP_FIRST]
+        xd = base["roll"]["x_plan"][d0]                # base["roll"] 含全年 365 天（d_start=0），按天序号直接索引
         for h in (10, 12, 14, 16, 18, 20):
-            j0 = 6 * h                                     # 模板第 6H 格（0 基），即该表 1 时段
-            y_val = float(xd[j0])                          # 填法 Y：真实第 6H+1 个时段
-            x_val = float(xd[(j0 + 1) % K])                # 填法 X：真实第 6H+2 个时段
-            spec_rows.append([t, "%d:00-%d:10" % (h, h), j0 + 1, r4(y_val), r4(x_val),
+            k_y = 6 * h + 1                                # 填法 Y：H:00-H:10 ↔ 当天第 6H+1 个时段（1 基）
+            y_val = float(xd[k_y - 1])                     # 填法 Y 取 0 基 idx = 6H
+            x_val = float(xd[k_y - 2])                     # 填法 X 取 0 基 idx = 6H-1（模板少轮转一格）
+            spec_rows.append([t, "%d:00-%d:10" % (h, h), k_y, r4(y_val), r4(x_val),
                               r4(x_val - y_val)])
     return rows, header, spec_rows
 
