@@ -30,8 +30,11 @@ def apply_chinese_style():
     输入：无
     输出：无（直接修改 matplotlib 全局 rcParams）
     """
-    # 指定中文字体候选，避免出现方块乱码（本机实测 SimHei 可用）
-    plt.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei"]
+    # 字体链回退（matplotlib ≥3.6）：SimHei 缺字形（如 ²、Ē 的组合变音符、U+2212 减号）时
+    # 依次回退到 Microsoft YaHei 与内置的 DejaVu Sans，保证中文与数学符号都不缺字形。
+    # 注意：回退链必须写在 font.family 列表里才生效（只写 font.sans-serif 链不会触发跨字体回退，实测）
+    plt.rcParams["font.family"] = ["SimHei", "Microsoft YaHei", "DejaVu Sans"]
+    plt.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei", "DejaVu Sans"]
     # 解决坐标轴负号显示为方块的问题
     plt.rcParams["axes.unicode_minus"] = False
     # 统一的字号体系，保证论文缩放后仍清晰

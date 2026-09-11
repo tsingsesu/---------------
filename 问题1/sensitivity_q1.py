@@ -816,7 +816,7 @@ def run_s5(price, load, pv, base):
          round(rt_lock["cost"] - lock["cost"], ND),
          round(rel_pct(rt_lock["cost"], lock["cost"]), ND),
          "同端点条件下往返口径更省——单向 0.9487 > 0.9，效率更高；差 %.4f 元（%.4f%%）"
-         % (lock["cost"] - rt_lock["cost"], rel_pct(lock["cost"] - rt_lock["cost"], lock["cost"]))],
+         % (lock["cost"] - rt_lock["cost"], rel_pct(rt_lock["cost"], lock["cost"]))],
         ["效率口径", "单向 η=0.9，端点自由",
          round(free["cost"], ND), round(free["x_total"], ND), round(free["u_total"], ND),
          round(free["v_total"], ND), round(free["E_end"], ND), "", "", "与上行共同构成 2×2 效率×端点对照"],
