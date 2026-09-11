@@ -48,8 +48,27 @@ KAPPA_OVER = 1.5           # κ₊，调整量高于计划量部分（超用）�
 TOL_ZERO = 1e-9            # 偏差/残差的容差归零阈值（kWh），吸收 LP 数值噪声
 
 
+def terminal_value_definitions(price_all, eta=ETA):
+    """按 D-10 生成逐日"终端余值单价"的定义数组（问题 4 专用，供 run_q4 与灵敏度共用）。
+
+    定义（`口径与假设台账.md` D-10）：第 d 天 LP 的终端余值单价
+        V_E^d = 次一日最低的"每单位入储成本" = min_k p_k^{d+1} / η（元/kWh）。
+    跨年处理（D-10 未覆盖 12-31）：12-31 无次日数据，取**当日最低价 / η**，与构思手
+    探针（`_phase0/probe15_q4_scale.py`）一致，确保双方对账不受口径边界影响。
+
+    输入：price_all，np.ndarray (D,144)，逐日逐时段电价，元/kWh
+          eta，无量纲，单向效率
+    输出：np.ndarray (D,)，逐日 V_E，元/kWh
+    """
+    price_all = np.asarray(price_all, dtype=float)
+    p_min_row = price_all.min(axis=1)                      # 逐日最低价，(D,)
+    # 第 d 天取第 d+1 天的最低价；末日无次日，退回当日最低价（跨年处理）
+    p_min_next = np.concatenate([p_min_row[1:], p_min_row[-1:]])
+    return p_min_next / float(eta)                          # 单位入储成本，元/kWh
+
+
 def solve_day(price, load, pv_plan, e_init=E_INIT, mode="cyclic", eta=ETA,
-              p_max=P_MAX, e_min=E_MIN, e_max=E_MAX, dt_h=DT_H):
+              p_max=P_MAX, e_min=E_MIN, e_max=E_MAX, dt_h=DT_H, v_end=0.0):
     """求解单日"计划购电量 + 储能充放电"线性规划。
 
     输入：price，np.ndarray (K,)，电价，元/kWh
@@ -61,14 +80,25 @@ def solve_day(price, load, pv_plan, e_init=E_INIT, mode="cyclic", eta=ETA,
           p_max，kW，最大充放电功率（作用于单时段充/放电量的变量上下界 u,v ≤ p_max·Δt）
           e_min / e_max，kWh，储电量允许下/上限
           dt_h，h，时段长度（Δ）
+          v_end，元/kWh，终端储电量的单位余值 V_E（问题 4 的 D-10 口径，默认 0 = 终端自由）。
+                目标改为 min Σp·x − V_E·E_K，其中 E_K 用**显式变量 + 等式约束**
+                E_K − Σ(η·u − v/η) = e_init 引入（与构思手探针 probe15_q4_scale.py 的
+                变量结构完全同构：x/u/v 的约束集合与原 solve_day 逐行相同，仅追加 1 个变量
+                与 1 行等式）。之所以不把 −V_E·E_K 折算进 u/v 的系数：中式 LP 在"光伏弃光
+                充裕时段"存在 u、v 同增的中性方向（等费用多最优），两种写法的最优值相同，
+                但 HiGHS 会落在不同顶点上，导致充放电分解与构思手锚定不可逐位对账；
+                显式形式与探针同构，双方结果逐位一致，且天然给出 u·v=0 的洁净解
+                （该日同时充放 = 0，仍满足"无同时充放"核验要求）。v_end=0 时不引入该变量，
+                矩阵与求解路径与问题 1/2/3 逐位相同。cyclic 模式下终端被锁定，v_end 无意义。
     输出：dict，键含义——
           x_plan  (K,)  计划购电量，kWh
           u_chg   (K,)  充电量，kWh
           v_dis   (K,)  放电量，kWh
           E_soc   (K+1,) 储电量轨迹，kWh（下标 0 为 0:00，下标 K 为 24:00）
           g_curt  (K,)  弃光电量，kWh（供给约束的富余量）
-          cost   float  全天购电费 Σ p_k x_k，元
+          cost   float  全天购电费 Σ p_k x_k，元（实际缴费，不含终端余值；余值只改变决策）
           pv_marginal (K,) 光伏边际价值，元/kWh（对偶信息，正数表示多用 1 kWh 光伏可省的购电费）
+          v_end  float  本次求解使用的终端余值单价，元/kWh
           status int / message str  求解器状态
     """
     # 统一转成 float 一维数组，避免调用方传入 list 或整型数组时出现类型问题
@@ -78,9 +108,17 @@ def solve_day(price, load, pv_plan, e_init=E_INIT, mode="cyclic", eta=ETA,
     n_period = price.size                                    # 本日时段数（问题 1 为 144）
     assert load.size == n_period and pv_plan.size == n_period, "price/load/pv 长度必须一致"
     u_max = float(p_max) * float(dt_h)                       # 单时段最大充/放电量，kWh
+    v_end = float(v_end)                                     # 终端余值单价（D-10），元/kWh
+    if mode == "cyclic" and v_end != 0.0:
+        raise ValueError("cyclic 模式下终端储电量被锁定，终端余值 v_end 无意义（D-10 对照请用 mode='free'）")
 
-    # ---- 目标函数：min Σ p_k x_k；充电量与放电量的系数为 0 ----
-    cost_vec = np.concatenate([price, np.zeros(2 * n_period)])
+    # ---- 目标函数 ----
+    if v_end == 0.0:
+        # v_end=0 时保持原实现逐位不变：min Σ p_k x_k，充电量与放电量系数为 0
+        cost_vec = np.concatenate([price, np.zeros(2 * n_period)])
+    else:
+        # D-10 终端余值：追加显式变量 E_K（第 3K+1 个变量），目标含 −V_E·E_K
+        cost_vec = np.concatenate([price, np.zeros(2 * n_period), [-v_end]])
 
     # ---- 供给约束（不等式）：−x_k + u_k − v_k ≤ Δ(P_k − L_k) ----
     a_supply = hstack([-identity(n_period, format="csr"),
@@ -105,8 +143,25 @@ def solve_day(price, load, pv_plan, e_init=E_INIT, mode="cyclic", eta=ETA,
     else:
         a_eq, b_eq = None, None
 
-    # ---- 变量上下界：[x 无上界非负 | u ∈[0,u_max] | v ∈[0,u_max]] ----
+    # ---- 变量上下界：[x 无上界非负 | u ∈[0,u_max] | v ∈[0,u_max] | 可选 E_K] ----
     bounds = [(0.0, None)] * n_period + power_bounds(n_period=n_period, u_max=u_max)
+
+    if v_end != 0.0:
+        # 显式终端变量 E_K（第 3K+1 个变量）：不等式约束矩阵补一列全零（E_K 只在等式行出现）
+        a_ub = hstack([a_ub, csr_matrix((a_ub.shape[0], 1))]).tocsr()
+        # 等式 E_K − Σ(η·u − v/η) = e_init，即 Σ(η·u − v/η) − E_K = −e_init；
+        # E_K 落在储电量允许区间内（与构思手探针 probe15 的变量结构完全同构）
+        a_te = hstack([csr_matrix((1, n_period)),
+                       csr_matrix(eta * np.ones((1, n_period))),
+                       csr_matrix((-1.0 / eta) * np.ones((1, n_period))),
+                       csr_matrix([[-1.0]])]).tocsr()
+        b_te = np.array([-float(e_init)])
+        if a_eq is None:
+            a_eq, b_eq = a_te, b_te
+        else:
+            a_eq = vstack([a_eq, a_te]).tocsr()
+            b_eq = np.concatenate([b_eq, b_te])
+        bounds = bounds + [(float(e_min), float(e_max))]
 
     # ---- 求解：HiGHS 求解器，完全确定性问题，无需随机种子 ----
     res = linprog(cost_vec, A_ub=a_ub, b_ub=b_ub, A_eq=a_eq, b_eq=b_eq,
@@ -142,6 +197,7 @@ def solve_day(price, load, pv_plan, e_init=E_INIT, mode="cyclic", eta=ETA,
         "g_curt": g_curt,
         "cost": cost,
         "pv_marginal": pv_marginal,
+        "v_end": v_end,
         "status": int(res.status),
         "message": str(res.message),
     }
@@ -204,7 +260,7 @@ def baseline_costs(price, load, pv_plan, dt_h=DT_H):
 
 def solve_stage(price, load, pv_fc, e_init=E_INIT, x_ref=None, k_start=0, n_period=K,
                 kappa_under=KAPPA_UNDER, kappa_over=KAPPA_OVER, eta=ETA,
-                p_max=P_MAX, e_min=E_MIN, e_max=E_MAX, dt_h=DT_H):
+                p_max=P_MAX, e_min=E_MIN, e_max=E_MAX, dt_h=DT_H, v_end=0.0):
     """多阶段滚动 LP 的"单阶段"求解器（问题 3/4-3 共用；问题 1/2 的 solve_day 保持不变）。
 
     用途：在某个决策时刻（0:00/6:00/12:00/18:00），对从 k_start 起的 n_period 个**未来时段**
@@ -243,6 +299,11 @@ def solve_stage(price, load, pv_fc, e_init=E_INIT, x_ref=None, k_start=0, n_peri
           n_period，int，本阶段时段数
           kappa_under / kappa_over，偏差电价系数（倍）
           eta / p_max / e_min / e_max / dt_h，储能参数（同 solve_day）
+          v_end，元/kWh，本阶段终端的储电量余值单价 V_E（问题 4 的 D-10；默认 0 = 终端自由）。
+                正值时只应加在**当天最后一个决策阶段**（覆盖到 24:00 的那一段），其含义是
+                "阶段终端 = 当天 24:00 的储电量存量价值"；实现与 solve_day 相同——追加显式
+                变量 E_K 与等式 Σ(η·u − v/η) − E_K = −e_init，目标加 −V_E·E_K。v_end=0 时
+                不引入该变量与等式，矩阵与求解路径与问题 3 逐位相同。
     输出：dict，键含义——
           x_plan  (n_period,) 本阶段决策的购电量 y，kWh
           u_chg   (n_period,) 充电量，kWh
@@ -251,8 +312,10 @@ def solve_stage(price, load, pv_fc, e_init=E_INIT, x_ref=None, k_start=0, n_peri
           d_under (n_period,) 相对 x_ref 的欠取量 (x_ref − y)^+，kWh（无参照时为 0）
           d_over  (n_period,) 相对 x_ref 的超用量 (y − x_ref)^+，kWh（无参照时为 0）
           g_curt  (n_period,) 弃光电量，kWh
-          obj     float 本阶段 LP 目标值（边际形式，元）；可按阶段相加
+          obj     float 本阶段 LP 目标值（边际形式，元）；可按阶段相加（v_end>0 的末阶段
+                  额外含 −V_E·E_K 项，该阶段不宜再与其它阶段直接相加做费用解释）
           cost_plan float 本阶段全价购电费 Σ p_k·y_k，元（记录用，不参与目标）
+          v_end   float 本次求解使用的阶段终端余值单价，元/kWh
           status int / message str 求解器状态
     """
     price = np.asarray(price, dtype=float).reshape(-1)
@@ -268,6 +331,7 @@ def solve_stage(price, load, pv_fc, e_init=E_INIT, x_ref=None, k_start=0, n_peri
         x_ref = np.asarray(x_ref, dtype=float).reshape(-1)
         assert x_ref.size == n, "x_ref 长度必须等于 n_period"
     u_max = float(p_max) * float(dt_h)                     # 单时段最大充/放电量，kWh
+    v_end = float(v_end)                                   # 阶段终端余值单价（D-10），元/kWh
 
     # ---- 目标系数（D-12 结算的等价分段线性形式，对任意 κ₋/κ₊ 精确）----
     # 恒等式：p·min(x₀,y) + κ₋p(x₀−y)⁺ + κ₊p(y−x₀)⁺ ≡ (1−κ₋)p·y + (κ₊+κ₋−1)p·(y−x₀)⁺ + κ₋p·x₀，
@@ -278,7 +342,9 @@ def solve_stage(price, load, pv_fc, e_init=E_INIT, x_ref=None, k_start=0, n_peri
     else:
         c_y = price                                        # 0:00 计划：全价，与 solve_day 一致
         c_over = np.zeros(n)
-    cost_vec = np.concatenate([c_y, np.zeros(2 * n), c_over])
+    # 终端余值（仅末阶段非零）：追加显式变量 E_K（第 4n+1 个变量），目标含 −V_E·E_K
+    cost_vec = np.concatenate([c_y, np.zeros(2 * n), c_over,
+                               ([-v_end] if v_end != 0.0 else [])])
 
     # ---- 供给约束（不等式）：−y_k + u_k − v_k ≤ Δ(P_k − L_k) ----
     a_supply = hstack([-identity(n, format="csr"), identity(n, format="csr"),
@@ -302,10 +368,25 @@ def solve_stage(price, load, pv_fc, e_init=E_INIT, x_ref=None, k_start=0, n_peri
     a_ub = vstack([a_supply, a_over, a_storage]).tocsr()
     b_ub = np.concatenate([b_supply, b_over, b_st])
 
-    # ---- 变量上下界：[y ≥0 | u,v ∈[0, P̄Δ] | d⁺ ≥ 0] ----
+    # ---- 变量上下界：[y ≥0 | u,v ∈[0, P̄Δ] | d⁺ ≥ 0 | 可选 E_K] ----
     bounds = [(0.0, None)] * n + power_bounds(n_period=n, u_max=u_max) + [(0.0, None)] * n
 
-    res = linprog(cost_vec, A_ub=a_ub, b_ub=b_ub, bounds=bounds, method="highs")
+    if v_end != 0.0:
+        # 显式终端变量 E_K（第 4n+1 个变量）：不等式约束矩阵补一列全零（E_K 只在等式行出现）；
+        # 等式 Σ(η·u − v/η) − E_K = −e_init，E_K ∈ [e_min, e_max]（与构思手探针结构同构）
+        a_ub = hstack([a_ub, csr_matrix((a_ub.shape[0], 1))]).tocsr()
+        a_te = hstack([csr_matrix((1, n)),
+                       csr_matrix(eta * np.ones((1, n))),
+                       csr_matrix((-1.0 / eta) * np.ones((1, n))),
+                       csr_matrix((1, n)),
+                       csr_matrix([[-1.0]])]).tocsr()
+        b_te = np.array([-float(e_init)])
+        bounds = bounds + [(float(e_min), float(e_max))]
+    else:
+        a_te, b_te = None, None
+
+    res = linprog(cost_vec, A_ub=a_ub, b_ub=b_ub, A_eq=a_te, b_eq=b_te,
+                  bounds=bounds, method="highs")
     if not res.success:
         raise RuntimeError("阶段 LP 求解失败：status=%s，message=%s" % (res.status, res.message))
 
@@ -333,6 +414,7 @@ def solve_stage(price, load, pv_fc, e_init=E_INIT, x_ref=None, k_start=0, n_peri
         "g_curt": g_curt,
         "obj": obj,
         "cost_plan": cost_plan,
+        "v_end": v_end,
         "k_start": int(k_start),
         "status": int(res.status),
         "message": str(res.message),

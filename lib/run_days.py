@@ -29,16 +29,20 @@ from lib.timegrid import DT_H, K
 
 
 def solve_rolling(price, load, pv_actual, e_init=E_INIT, mode="free", eta=ETA,
-                  p_max=P_MAX, e_min=E_MIN, e_max=E_MAX, d_start=0, d_end=None):
+                  p_max=P_MAX, e_min=E_MIN, e_max=E_MAX, d_start=0, d_end=None,
+                  v_end=0.0):
     """逐日滚动 LP：按日推进，前一日 24:00 储电量作为次日 0:00 储电量。
 
-    输入：price，np.ndarray (D,)，**当日**电价向量，元/kWh（问题 2/3 逐日相同）
+    输入：price，np.ndarray (D,) 或 (D,K)，电价，元/kWh。一维时逐日相同（问题 2/3）；
+          二维时逐日逐时段不同（问题 4，唯一输入差异就是这张价格矩阵）
           load，np.ndarray (D,K)，负载功率，kW
           pv_actual，np.ndarray (D,K)，光伏实际功率，kW
           e_init，kWh，E_0（第 d_start 天 0:00 的储电量）
           mode，str，'free'（终端自由，问题 2/3/4 主口径）或 'cyclic'（终端=当日初始，对照）
           eta / p_max / e_min / e_max，储能参数（默认取附录 1 标准值）
           d_start / d_end，int，滚动起止天序号（0 基，含 d_start、不含 d_end；None 表示到末尾）
+          v_end，float 或 np.ndarray (D,) 或 callable(d)->float，逐日终端余值单价 V_E^d，
+                 元/kWh（问题 4 的 D-10；默认 0 = 终端自由，问题 2/3 口径逐位不变）
     输出：dict，键含义——
           d_index  (n_days,)   参与滚动的天序号（0 基）
           x_plan   (n_days,K)  计划购电量，kWh
@@ -59,6 +63,10 @@ def solve_rolling(price, load, pv_actual, e_init=E_INIT, mode="free", eta=ETA,
     """
     load = np.asarray(load, dtype=float)
     pv_actual = np.asarray(pv_actual, dtype=float)
+    price = np.asarray(price, dtype=float)
+    price_2d = (price.ndim == 2)                           # True：逐日逐时段价格（问题 4）
+    if price_2d:
+        assert price.shape == load.shape, "二维价格矩阵的形状必须与负载 (D,K) 一致"
     n_all = load.shape[0]                                  # 全部天数
     if d_end is None:
         d_end = n_all                                      # 默认滚到数据末尾
@@ -78,16 +86,25 @@ def solve_rolling(price, load, pv_actual, e_init=E_INIT, mode="free", eta=ETA,
 
     e = float(e_init)                                      # 跨日传递的储电量状态，kWh
     for i, d in enumerate(d_index):
-        # 单日 LP：目标 min Σp·x，供给/储能约束见 lib.solve_day；终端条件由 mode 控制
-        res = solve_day(price, load[d], pv_actual[d], e_init=e, mode=mode,
-                        eta=eta, p_max=p_max, e_min=e_min, e_max=e_max)
+        # 第 d 天的终端余值单价 V_E^d（D-10）：None/0 时终端自由，问题 2/3 口径逐位不变
+        if v_end is None:
+            ve_d = 0.0
+        elif callable(v_end):
+            ve_d = float(v_end(d))                         # 允许传入按天计算的函数
+        else:
+            ve_d = float(np.asarray(v_end, dtype=float)[d]) if np.ndim(v_end) else float(v_end)
+        # 单日 LP：目标 min Σp·x（或含 D-10 终端余值的 min Σp·x − V_E·E_144）；
+        # 逐日价格矩阵时取当日一行，否则所有天共用同一价格向量 p（问题 2/3）
+        price_day = price[d] if price_2d else price
+        res = solve_day(price_day, load[d], pv_actual[d], e_init=e, mode=mode,
+                        eta=eta, p_max=p_max, e_min=e_min, e_max=e_max, v_end=ve_d)
         x = res["x_plan"]; u = res["u_chg"]; v = res["v_dis"]
         # 紧急购电量按定义重算：供给缺口 = L·Δ + u − x − P·Δ − v（负值截断为 0）
         r = np.maximum(load[d] * DT_H + u - v - pv_actual[d] * DT_H - x, 0.0)
         x_plan[i] = x; u_chg[i] = u; v_dis[i] = v; r_emg[i] = r
         E_soc[i] = res["E_soc"]
-        cost_plan_day[i] = float(np.dot(price, x))          # 计划购电费，元
-        cost_emg_day[i] = 5.0 * float(np.dot(price, r))     # 紧急购电费（5 倍价），元
+        cost_plan_day[i] = float(np.dot(price_day, x))       # 计划购电费，元
+        cost_emg_day[i] = 5.0 * float(np.dot(price_day, r))  # 紧急购电费（5 倍价），元
         cost_day[i] = cost_plan_day[i] + cost_emg_day[i]    # 当日总费用，元
         status_day[i] = res["status"]
         e = float(res["E_soc"][-1])                         # 传递到次日 0:00（D-04）
@@ -122,7 +139,8 @@ def block_sums_by_k(values, k_first, k_last):
 def solve_rolling_staged(price, load, pv_actual, pv_fc144, e_init=E_INIT,
                          stages=(0, 6, 12, 18), kmark=None, d_start=0, d_end=None,
                          eta=ETA, p_max=P_MAX, e_min=E_MIN, e_max=E_MAX,
-                         kappa=5.0, kappa_under=0.5, kappa_over=1.5, dt_h=DT_H):
+                         kappa=5.0, kappa_under=0.5, kappa_over=1.5, dt_h=DT_H,
+                         v_end_day=None):
     """逐日**多阶段**滚动 LP（问题 3/4-3 主内核）：每天按决策时刻序列依次求解未来时段。
 
     决策流程（D-13 不可追溯，选项 C 语义）：
@@ -139,7 +157,8 @@ def solve_rolling_staged(price, load, pv_actual, pv_fc144, e_init=E_INIT,
     实际值只在评估阶段代入：先用**实际光伏**按"最终生效购电量 y + 最终充放电 u,v"重算
     紧急购电量 r = [L·Δ + u − y − P·Δ − v]⁺，再按 D-12 结算。
 
-    输入：price，np.ndarray (K,)，当日电价，元/kWh（问题 3 逐日相同）
+    输入：price，np.ndarray (K,) 或 (D,K)，电价，元/kWh。一维时逐日相同（问题 3）；
+          二维时逐日逐时段不同（问题 4，唯一输入差异就是这张价格矩阵）
           load，np.ndarray (D,K)，负载功率，kW
           pv_actual，np.ndarray (D,K)，光伏**实际**功率，kW（只用于评估）
           pv_fc144，np.ndarray (D,4,K)，分解到 10 分钟粒度的光伏**预报**，kW；
@@ -151,6 +170,12 @@ def solve_rolling_staged(price, load, pv_actual, pv_fc144, e_init=E_INIT,
           d_start / d_end，int，滚动天序号（0 基，含 d_start、不含 d_end；None 到末尾）
           eta / p_max / e_min / e_max / dt_h，储能参数（默认附录 1 标准值）
           kappa / kappa_under / kappa_over，结算倍数（κ=5、κ₋=0.5、κ₊=1.5）
+          v_end_day，np.ndarray (D,)、callable(d)->float 或 None，逐日终端余值单价 V_E^d，元/kWh
+                  （问题 4 的 D-10）。None 时各天均取 0（终端自由，问题 3 口径，逐位不变）。
+                  正值时只写入**当天最后一个决策阶段**（18:00 阶段）的单阶段目标——
+                  当天较早时段的储能价值已由同一 LP 内的约束自然衔接，无需重复计入；
+                  终端段在 18:00 阶段内，故该改写与"整日 LP 目标加 −V_E·E_K"完全一致
+                  （每个阶段的 LP 覆盖"该阶段起点→当日 24:00"，阶段内终端折算公式见 solve_day）。
     输出：dict，键含义（各数组第一维均为参与滚动的天数 n_days）——
           d_index   (n_days,)   天序号（0 基）
           x_plan / y_adj / u_chg / v_dis / r_emg / g_curt  (n_days,K)  计划量/最终量/充/放/紧急/弃光，kWh
@@ -165,6 +190,10 @@ def solve_rolling_staged(price, load, pv_actual, pv_fc144, e_init=E_INIT,
     load = np.asarray(load, dtype=float)
     pv_actual = np.asarray(pv_actual, dtype=float)
     pv_fc144 = np.asarray(pv_fc144, dtype=float)
+    price = np.asarray(price, dtype=float)
+    price_2d = (price.ndim == 2)                               # True：逐日逐时段价格（问题 4）
+    if price_2d:
+        assert price.shape == load.shape, "二维价格矩阵的形状必须与负载 (D,K) 一致"
     if kmark is None:
         kmark = {0: 0, 6: 36, 12: 72, 18: 108}                 # D-13 的覆盖起点（0 基）
     stage_list = [int(t) for t in stages]                      # 当天执行的决策时刻序列
@@ -196,6 +225,13 @@ def solve_rolling_staged(price, load, pv_actual, pv_fc144, e_init=E_INIT,
     e = float(e_init)                                          # 跨日传递的储电量状态，kWh
     assert 0 in stage_list, "多阶段滚动必须包含 0:00 决策（计划购电量的定义时刻）"
     for i, d in enumerate(d_index):
+        # 当天终端余值单价 V_E^d（D-10；None 或 0 表示终端自由，问题 3 口径）
+        if v_end_day is None:
+            ve_d = 0.0
+        elif callable(v_end_day):
+            ve_d = float(v_end_day(d))                         # 允许传入按天计算的函数
+        else:
+            ve_d = float(np.asarray(v_end_day, dtype=float)[d])
         # 状态容器：全时段先按"0:00 决策"填满，之后被各调整时刻逐步覆盖
         xx = np.zeros(K); uu = np.zeros(K); vv = np.zeros(K)
         x0 = None                                              # 0:00 计划（偏差结算的固定基准）
@@ -209,10 +245,15 @@ def solve_rolling_staged(price, load, pv_actual, pv_fc144, e_init=E_INIT,
             pv_seg = pv_fc144[d, tau_pos[tau], ks:]            # 本阶段的光伏预报（10 分钟粒度）
             # 偏差项参照 X0：0:00 计划阶段无参照（目标全价）；后续阶段一律相对 0:00 计划
             ref_seg = None if x0 is None else x0[ks:]
-            res = solve_stage(price[ks:], load[d, ks:], pv_seg, e_init=e_cur,
+            # 终端余值只加在当天最后一个决策阶段：该阶段覆盖到 24:00，E_K 即当日终端储电量
+            ve_seg = ve_d if si == len(stage_list) - 1 else 0.0
+            # 本阶段的电价切片：二维价格矩阵时取当天一行（问题 4），否则共用价格向量（问题 3）
+            price_seg = (price[d, ks:] if price_2d else price[ks:])
+            res = solve_stage(price_seg, load[d, ks:], pv_seg, e_init=e_cur,
                               x_ref=ref_seg, k_start=ks, n_period=n_seg,
                               kappa_under=kappa_under, kappa_over=kappa_over,
-                              eta=eta, p_max=p_max, e_min=e_min, e_max=e_max, dt_h=dt_h)
+                              eta=eta, p_max=p_max, e_min=e_min, e_max=e_max, dt_h=dt_h,
+                              v_end=ve_seg)
             st_sum += res["status"]
             # 写入/覆盖本阶段各时段的值（已执行时段不在本阶段范围内，天然不可追溯）
             xx[ks:] = res["x_plan"]                            # 本阶段决策的购电量
@@ -238,8 +279,9 @@ def solve_rolling_staged(price, load, pv_actual, pv_fc144, e_init=E_INIT,
         r_emg[i] = r_day
         g_curt[i] = np.maximum(-residual, 0.0)             # 盈余为弃光（非负）
         # 恒等式：xx + P_actual·Δ + vv − load·Δ − uu = g_curt − r_emg（供审计核验）
-        # D-12 结算（主口径与对照口径）
-        st = settle_total(price, x_plan[i], y_adj[i], r_day,
+        # D-12 结算（主口径与对照口径）；二维价格时按当日逐时段电价结算（问题 4）
+        price_day = price[d] if price_2d else price
+        st = settle_total(price_day, x_plan[i], y_adj[i], r_day,
                           kappa=kappa, kappa_under=kappa_under, kappa_over=kappa_over)
         j_plan[i] = st["J_plan"]; j_adj[i] = st["J_adj"]; j_emg[i] = st["J_emg"]
         j_day[i] = st["J"]; j_alt_day[i] = st["J_alt"]
