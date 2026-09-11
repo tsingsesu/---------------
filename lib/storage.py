@@ -65,6 +65,11 @@ def build_storage_blocks(n_period=K, eta=ETA, e_min=E_MIN, e_max=E_MAX, e_init=E
     等式的终端条件（mode='cyclic'）：
       * E_K = E_0 = e_init <=> Σ_{j<=K}(eta·u_j − v_j/eta) = 0
 
+    说明：单时段充放电量的功率上限不在此处施加，而是由变量上下界给出
+    （见 `power_bounds`，u,v ≤ p_max·Δt；p_max 由调用方 `solve_day` 传入）。
+    这样储能块只含"前缀和"型约束，矩阵结构与问题 1 验收时的形态完全一致，
+    避免冗余行改变 LP 退化时的顶点选择、造成与既有锚定值的非本质偏差。
+
     输入：n_period，int，时段数（问题 1 为 144）
           eta，无量纲，单向效率
           e_min / e_max，kWh，储电量允许下/上限

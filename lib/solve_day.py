@@ -43,7 +43,7 @@ def solve_day(price, load, pv_plan, e_init=E_INIT, mode="cyclic", eta=ETA,
           e_init，kWh，E_0（0:00 储电量）
           mode，str，'cyclic'（锁定 E_K = E_0）或 'free'（端点自由，对照口径）
           eta，无量纲，单向充放电效率
-          p_max，kW，最大充放电功率
+          p_max，kW，最大充放电功率（作用于单时段充/放电量的变量上下界 u,v ≤ p_max·Δt）
           e_min / e_max，kWh，储电量允许下/上限
           dt_h，h，时段长度（Δ）
     输出：dict，键含义——

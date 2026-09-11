@@ -1,0 +1,16 @@
+# Python 构建产物与缓存（不入库）
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# 编辑器/系统临时文件
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+~$*
+
+# 本工作区临时文件（下划线前缀的抽查脚本产物可保留，真正的 *.tmp 不入库）
+*.tmp
+_C题全文_tmp.txt
