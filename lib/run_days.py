@@ -232,10 +232,12 @@ def solve_rolling_staged(price, load, pv_actual, pv_fc144, e_init=E_INIT,
         u_chg[i] = uu; v_dis[i] = vv
         # 最终储能轨迹（由最终充放电量独立重算，便于与仓库解核对）
         E_soc[i] = np.concatenate([[e], e + np.cumsum(eta * uu - vv / eta)])
-        # 实际值评估：紧急购电量 = 供给缺口（负值截断为 0）
-        r_day = np.maximum(load[d] * dt_h + uu - vv - pv_actual[d] * dt_h - xx, 0.0)
+        # 实际值评估：紧急购电量 = 供给缺口；弃光 = 供给盈余（两者互补，由同一残差切分）
+        residual = load[d] * dt_h + uu - vv - pv_actual[d] * dt_h - xx     # 供给残差（正=缺口）
+        r_day = np.maximum(residual, 0.0)                  # 缺口由紧急购电覆盖（κ 倍价）
         r_emg[i] = r_day
-        g_curt[i] = xx + pv_actual[d] * dt_h + vv - load[d] * dt_h - uu   # 弃光量（实际口径）
+        g_curt[i] = np.maximum(-residual, 0.0)             # 盈余为弃光（非负）
+        # 恒等式：xx + P_actual·Δ + vv − load·Δ − uu = g_curt − r_emg（供审计核验）
         # D-12 结算（主口径与对照口径）
         st = settle_total(price, x_plan[i], y_adj[i], r_day,
                           kappa=kappa, kappa_under=kappa_under, kappa_over=kappa_over)

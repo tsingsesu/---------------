@@ -219,12 +219,17 @@ def solve_stage(price, load, pv_fc, e_init=E_INIT, x_ref=None, k_start=0, n_peri
         κ₋Σp·x 恰好对应 J_plan−J_adj，故各阶段目标可比、可直接相加。
 
     模型（变量顺序 [y(n) | u(n) | v(n) | d⁺(n)]，n = n_period，本阶段首段即 k_start 段）：
-        min  Σ_k κ₋·p_k·y_k + (κ₊−κ₋)·Σ_k p_k·d⁺_k
+        min  (1−κ₋)·Σ_k p_k·y_k + (κ₊+κ₋−1)·Σ_k p_k·d⁺_k
         s.t. y_k + P̂_k·Δ + v_k ≥ L_k·Δ + u_k                （供给不低于负载，同 solve_day）
              0 ≤ u_k, v_k ≤ P̄·Δ
              E 沿本阶段递推（起点 e_init），满足上下限；终端自由（D-04）
              d⁺_k ≥ y_k − x_ref_k,  d⁺_k ≥ 0                （超出计划的部分）
              y ≥ 0
+    等价性推导：结算函数 S(y) = p·min(x₀,y) + κ₋p(x₀−y)⁺ + κ₊p(y−x₀)⁺ 对定值 x₀ 是分段线性，
+    在 y ≤ x₀ 段斜率 (1−κ₋)p、截距 κ₋p·x₀；在 y ≥ x₀ 段斜率 κ₊p、截距 (1−κ₊)p·x₀。
+    两段合写为 (1−κ₋)p·y + (κ₊+κ₋−1)p·(y−x₀)⁺ + κ₋p·x₀（在 y=x₀ 处两段取值相等等于 p·x₀），
+    且该式对任意 κ₋ ≤ 1、κ₊ ≥ 0 成立（不限于 κ₋=0.5 的特例，故 S1 的 κ₋ 扰动可直接用本函数）。
+    常数项与决策无关，不进入目标。
     x_ref=None（0:00 计划阶段）：目标退化为 min Σp·y（全价），与 solve_day 完全一致。
     d⁺ ≥ y − x_ref 为不等式约束（不是等式）：d⁺ 只出现在"要被最小化"的目标里，
     最优解自动取 d⁺ = (y − x_ref)⁺，故无需整数变量、也不会出现"d⁻ 型"变量。
@@ -264,10 +269,12 @@ def solve_stage(price, load, pv_fc, e_init=E_INIT, x_ref=None, k_start=0, n_peri
         assert x_ref.size == n, "x_ref 长度必须等于 n_period"
     u_max = float(p_max) * float(dt_h)                     # 单时段最大充/放电量，kWh
 
-    # ---- 目标系数：[y: 无参照时 p；有参照时 κ₋p] [u,v: 0] [d⁺: (κ₊−κ₋)p] ----
+    # ---- 目标系数（D-12 结算的等价分段线性形式，对任意 κ₋/κ₊ 精确）----
+    # 恒等式：p·min(x₀,y) + κ₋p(x₀−y)⁺ + κ₊p(y−x₀)⁺ ≡ (1−κ₋)p·y + (κ₊+κ₋−1)p·(y−x₀)⁺ + κ₋p·x₀，
+    # 常数项 κ₋Σp·x₀ 不影响优化，故阶段目标取前两项；κ₋=0.5 时退化为 0.5p·y + (κ₊−0.5)p·t⁺。
     if has_ref:
-        c_y = float(kappa_under) * price                   # 基础单价：欠取时退回的部分已由 κ₋p 体现
-        c_over = (float(kappa_over) - float(kappa_under)) * price   # 超出计划部分的追加单价
+        c_y = (1.0 - float(kappa_under)) * price           # 基础单价：买得越多付得越多
+        c_over = (float(kappa_over) + float(kappa_under) - 1.0) * price   # 超出计划部分的追加单价
     else:
         c_y = price                                        # 0:00 计划：全价，与 solve_day 一致
         c_over = np.zeros(n)
