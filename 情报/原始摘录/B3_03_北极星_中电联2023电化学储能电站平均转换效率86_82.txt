@@ -1,0 +1,10 @@
+# 北极星_中电联2023电化学储能电站平均转换效率86_82
+URL: https://news.bjx.com.cn/html/20240327/1368470.shtml
+最终URL: https://news.bjx.com.cn/html/20240327/1368470.shtml
+访问时间: 2026-09-11 11:41:57
+HTTP: 200  代理: True  字节: 15999
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题2：国内储能电站实测平均效率（对标本题eta^2=0.81）
+----------------------------------------------------------------------
+appkey: "CF_APP_WAF", // 应用标识var AC_Opt = {userUserId: requestInfo.userUserId
+var requestInfo = {"data":"","region":"cn","sceneId":"19x5u7lo","token":"cb879cc4bc563c6c96e0d148605384da","traceid":"2760774217890981171012564ea79d","type":"GET","userId":"HpadJlQnz2zSKcSmjXBaqQvjYUvP4jMJIk/ZwGNDNiM=","userUserId":"eZfhZLVeFbhiB15Q66VSz4JPR528C4zjlZHqngB2BeU="};

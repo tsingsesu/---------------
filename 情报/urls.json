@@ -1,0 +1,14 @@
+[
+  {"name": "国家发改委_进一步完善分时电价机制的通知_发改价格2021_1093号", "url": "https://zfxxgk.ndrc.gov.cn/web/iteminfo.jsp?id=18212", "note": "问题4：TOU峰谷价差的官方政策依据"},
+  {"name": "国家发改委_1093号_wap镜像", "url": "https://zfxxgk.ndrc.gov.cn/wap/iteminfo.jsp?id=18212", "note": "同上，wap 版便于抓正文"},
+  {"name": "中电联_中国电力行业年度发展报告2025", "url": "http://www.hydropower.org.cn/cn/index/734_37717_137062", "note": "问题3：全国电价水平锚定"},
+  {"name": "国家能源局山东监管办_山东两个细则编制说明", "url": "https://sdb.nea.gov.cn/xxgk/zcjd/202601/t20260106_293692.html", "note": "问题3：偏差考核/并网运行管理细则"},
+  {"name": "MDPI_Energies_微网能量管理决策方法综述", "url": "https://www.mdpi.com/1996-1073/19/15/3560", "note": "问题1：范式分布（LP/MILP/随机/鲁棒/MPC）"},
+  {"name": "MDPI_Information_微网优化能量管理技术趋势", "url": "https://www.mdpi.com/2078-2489/16/3/183", "note": "问题1：范式综述（第二独立来源）"},
+  {"name": "MDPI_Energies_瑞典住宅光伏加电池经济性", "url": "https://www.mdpi.com/1996-1073/18/21/5658", "note": "问题3：储能套利收益的可比量级（国外口径）"},
+  {"name": "ScienceDirect_微网EMS智能控制策略综述", "url": "https://www.sciencedirect.com/science/article/pii/S2590174525004556", "note": "问题1：MILP 在微网EMS中的使用"},
+  {"name": "solarbe_2025各省峰谷时段调整19地高峰电价上浮超50percent", "url": "https://news.solarbe.com/202506/30/390848.html", "note": "问题4：各省峰谷价差幅度"},
+  {"name": "海宁市发改局_政协提案答复_光伏储能协同", "url": "https://www.haining.gov.cn/col/col1229149382/art/2025/art_5b437d86ec304a30841be67a9fcb2680.html", "note": "问题3：地方储能项目经济性官方口径"},
+  {"name": "CNESA储能研究平台_报告详情", "url": "https://research.cnesa.org/m/report/info/?id=6092", "note": "问题2/3：储能产业权威数据"},
+  {"name": "e换宝_电力市场化推进工商储多省具备经济性", "url": "https://m.hx168.com.cn/article/457ff357c23cbe71f9b55d464c915bcd.html", "note": "问题3：工商业储能套利收益量级（C级，仅看做法）"}
+]

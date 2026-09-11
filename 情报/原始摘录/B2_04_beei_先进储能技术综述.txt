@@ -1,0 +1,72 @@
+# beei_先进储能技术综述
+URL: https://www.beei.org/index.php/EEI/article/view/4864/0
+最终URL: https://www.beei.org/index.php/EEI/article/view/4864/0
+访问时间: 2026-09-11 11:40:28
+HTTP: 200  代理: True  字节: 23613
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题2：储能技术参数（效率/寿命/DoD）综述
+----------------------------------------------------------------------
+User
+Citation Analysis
+Dimensions
+Google Scholar
+Scholar Metrics
+Scinapse
+Scopus
+Quick Links
+Editorial Boards
+Reviewers
+Abstracting and Indexing
+Guide of Authors
+Online Papers Submission
+Peer Review Process
+Publication Fee
+Register as Reviewer
+Publication Ethics
+Visitor Statistics
+DOI Deposit Report
+Generative AI Policies
+Contact Us
+Journal Content
+Browse
+By Issue
+By Author
+By Title
+Article Tools
+How to cite item
+Home
+About
+Login
+Register
+Search
+Current
+Archives
+Announcements
+Home
+>
+Vol 15, No 4
+>
+Sutikno
+Advanced energy storage technologies for renewable power systems: a comprehensive review
+Tole Sutikno, Ahmad Raditya Cahya Baswara, Watra Arsadiando, Hendril Satrian Purnama, Mohd Hatta Jopri
+Abstract
+The accelerating deployment of renewable energy, particularly solar and wind power, has intensified the need for advanced energy storage systems (ESS) to address intermittency and enhance grid reliability. However, existing reviews often provide fragmented technology comparisons without a unified techno-economic framework for systematic evaluation. This paper presents a comprehensive review of studies published between 2011 and 2025, examining electrochemical, mechanical, thermal, and hydrogen-based energy storage technologies using four standardized metrics: round-trip efficiency (RTE), levelized cost of storage (LCOS), cycle life, and technology readiness level (TRL). Lithium-ion batteries (LIBs) demonstrate the highest maturity and efficiency (RTE: 90–95% and LCOS: 120–200 USD/MWh), whereas sodium-ion batteries offer promising cost reductions of 30–40% through abundant materials and scalable manufacturing. Pumped hydro and compressed air energy storage (CAES) remain suitable for large-scale applications owing to their long service life and scalability, while thermal energy storage (TES) provides cost-effective long-duration storage for concentrated solar power (CSP). Hydrogen-based storage, despite lower RTE (25–45%), offers unique advantages for seasonal energy balancing. Unlike previous reviews, this study integrates techno-economic performance with technology maturity through a TRL-oriented comparative framework, enabling systematic technology assessment based on deployment readiness, economic viability, scalability, and application suitability, thereby supporting informed decision-making and future hybrid energy storage development.
+Keywords
+Advanced energy storage; Hybrid energy storage systems; Levelized cost of storage; Power systems; Renewable energy, Techno-economic analysis, Technology readiness level
+Full Text:
+PDF
+DOI:
+https://doi.org/10.11591/eei.v15i4.4864
+Refbacks
+There are currently no refbacks.
+This work is licensed under a
+Creative Commons Attribution-ShareAlike 4.0 International License
+.
+Bulletin of EEI Statistics
+Bulletin of Electrical Engineering and Informatics (BEEI)
+ISSN: 2089-3191
+,
+e-ISSN: 2302-9285
+This journal is published by the
+Institute of Advanced Engineering and Science (IAES)
+.

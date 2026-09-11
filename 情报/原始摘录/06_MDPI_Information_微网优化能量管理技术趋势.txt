@@ -1,0 +1,12 @@
+# MDPI_Information_微网优化能量管理技术趋势
+URL: https://www.mdpi.com/2078-2489/16/3/183
+最终URL: https://www.mdpi.com/2078-2489/16/3/183
+访问时间: 2026-09-11 11:39:05
+HTTP: 403  代理: True  字节: 398
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题1：范式综述（第二独立来源）
+----------------------------------------------------------------------
+Access Denied
+You don't have permission to access "http://www.mdpi.com/2078-2489/16/3/183" on this server.
+Reference #18.93d43b17.1789097944.1d025cb
+https://errors.edgesuite.net/18.93d43b17.1789097944.1d025cb

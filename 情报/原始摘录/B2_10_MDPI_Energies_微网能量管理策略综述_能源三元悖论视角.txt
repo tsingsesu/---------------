@@ -1,0 +1,12 @@
+# MDPI_Energies_微网能量管理策略综述_能源三元悖论视角
+URL: https://www.mdpi.com/1996-1073/16/1/289
+最终URL: https://www.mdpi.com/1996-1073/16/1/289
+访问时间: 2026-09-11 11:40:30
+HTTP: 403  代理: True  字节: 400
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题1：范式综述（若403则记录失败）
+----------------------------------------------------------------------
+Access Denied
+You don't have permission to access "http://www.mdpi.com/1996-1073/16/1/289" on this server.
+Reference #18.b351cc17.1789098029.7a5dfe4c
+https://errors.edgesuite.net/18.b351cc17.1789098029.7a5dfe4c

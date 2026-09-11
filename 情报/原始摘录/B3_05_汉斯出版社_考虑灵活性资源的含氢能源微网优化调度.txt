@@ -1,0 +1,8 @@
+# 汉斯出版社_考虑灵活性资源的含氢能源微网优化调度
+URL: https://www.hanspub.org/journal/paperinformation?paperid=118689
+最终URL: https://www.hanspub.org/journal/paperinformation?paperid=118689
+访问时间: 2026-09-11 11:41:59
+HTTP: 200  代理: False  字节: 98299
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题1：中文期刊里微网优化调度的建模参数表
+----------------------------------------------------------------------

@@ -1,0 +1,10 @@
+# 北极星_电化学储能电站运行指标及评价_标准解读
+URL: https://m.bjx.com.cn/mnews/20180806/918490.shtml
+最终URL: https://m.bjx.com.cn/mnews/20180806/918490.shtml
+访问时间: 2026-09-11 11:40:29
+HTTP: 200  代理: True  字节: 15999
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题2：同上标准的可读解读（C级，仅看做法）
+----------------------------------------------------------------------
+appkey: "CF_APP_WAF", // 应用标识var AC_Opt = {userUserId: requestInfo.userUserId
+var requestInfo = {"data":"","region":"cn","sceneId":"19x5u7lo","token":"2e896cc2ddbfb1ff481e0662c14339be","traceid":"276082be17890980290206785e7250","type":"GET","userId":"HpadJlQnz2zSKcSmjXBaqQvjYUvP4jMJIk/ZwGNDNiM=","userUserId":"eZfhZLVeFbhiB15Q66VSz4JPR528C4zjlZHqngB2BeU="};

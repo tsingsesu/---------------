@@ -1,0 +1,9 @@
+# IRENA_2017_电力储存与可再生能源成本与市场至2030
+URL: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2017/Oct/IRENA_Electricity_Storage_Costs_2017.pdf
+最终URL: https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2017/Oct/IRENA_Electricity_Storage_Costs_2017.pdf
+访问时间: 2026-09-11 11:41:54
+HTTP: 200  代理: False  字节: 2934574
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题2：A级国际机构对锂电往返效率/循环寿命的取值
+----------------------------------------------------------------------
+[PDF 二进制，2934574 bytes；请用 read_document 阅读]

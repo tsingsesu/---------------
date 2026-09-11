@@ -1,0 +1,694 @@
+# 清华_der期刊_考虑电网承载能力的微能源网集群共享储能双层优化配置
+URL: http://der.tsinghuajournals.com/CN/abstract/abstract158137.shtml
+最终URL: http://der.tsinghuajournals.com/CN/abstract/abstract158137.shtml
+访问时间: 2026-09-11 11:40:16
+HTTP: 200  代理: True  字节: 229411
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题1：国内微能源网+共享储能双层优化的建模范式与分时电价参数
+----------------------------------------------------------------------
+×
+模态框（Modal）标题
+在这里添加一些文本
+关闭
+关闭
+提交更改
+取消
+确定并提交
+×
+模态框（Modal）标题
+×
+考虑电网承载能力的微能源网集群共享储能双层优化配置
+江璐,万忠杨,单体华,李笑蓉,杨金刚
+分布式能源
+››
+2024, Vol. 9
+››
+Issue (6)
+: 56-64.
+PDF(1920 KB)
+清华大学出版社期刊中心
+中国科技核心期刊
+RCCSE中国核心学术期刊
+能源电力领域高质量科技期刊分级目录
+煤炭领域高质量科技期刊分级目录
+首页
+期刊简介
+编委会
+投稿指南
+投稿指南
+论文声明及版权转让协议
+版权与开放获取政策
+同行评议制度
+论文模版
+参考文献著录格式
+在线期刊
+优先出版
+当期目录
+过刊浏览
+阅读排行
+下载排行
+E-mail Alert
+出版伦理声明
+联系我们
+English
+首页
+期刊简介
+编委会
+在线期刊
+最新录用
+当期目录
+过刊浏览
+阅读排行
+下载排行
+引用排行
+E-mail Alert
+出版伦理声明
+联系我们
+English
+PDF(1920 KB)
+分布式能源
+››
+2024, Vol. 9
+››
+Issue (6)
+: 56-64.
+DOI:
+10.16513/j.2096-2185.DE.2409607
+学术研究
+考虑电网承载能力的微能源网集群共享储能双层优化配置
+江璐
+,
+万忠杨
+,
+单体华
+,
+李笑蓉
+,
+杨金刚
+作者信息
++
+国网冀北电力有限公司经济技术研究院，北京市　海淀区　100089
+作者简介:
+江　璐(1996)，女，硕士，工程师，研究方向为分布式能源、电力系统规划，hxlwzl@126.com；
+万忠杨(1996)，男，硕士，工程师，研究方向为电气工程及自动化、新型电力系统，nbdwzy@163.com；
+单体华(1987)，女，硕士，高级工程师，研究方向电力系统规划；
+李笑蓉(1977)，女，硕士，高级工程师，研究方向为电气工程及自动化、电网规划；
+杨金刚(1982)，男，博士，教授级高级工程师，研究方向为电网规划设计技术、电力系统安全稳定分析、新能源并网稳定分析。
+折叠
+Bilevel Optimal Allocation of Micro-Energy Grid Cluster Sharing Energy Storage Considering Grid Carrying Capacity
+Lu JIANG
+,
+Zhongyang WAN
+,
+Tihua SHAN
+,
+Xiaorong LI
+,
+Jingang YANG
+Author information
++
+Economic Research Institute, State Grid Jibei Electric Power Co., Ltd., Haidian District, Beijing 100089, China
+Show less
+文章历史
++
+收稿日期
+出版日期
+2024-08-30
+2024-12-05
+发布日期
+2025-01-14
+摘要
+共享储能是提高储能利用效率、发挥微能源网集群协同优势的有效措施，然而，现有研究大多将共享储能与微能源网集群间的能量传输通道简化为母线结构，存在仅能“定容”不能“选址”、配置后共享储能利用率不足等问题。在此背景下，建立了考虑电网承载能力的微能源网集群共享储能双层优化配置模型。首先，建立面向微能源网集群的共享储能双层配置模型：上层模型以大电网运行成本与共享储能规划运行成本最小为目标，考虑电网运行承载能力，优化决策共享储能的位置及容量；下层模型以各微能源网运行成本最小为目标，优化求解微能源网运行问题。其次，基于Karush Kuhn Tucker (KKT)条件将下层模型转换为上层模型的附加约束条件，将双层优化配置模型转换为单层优化问题。最后，利用包含3个微能源网的测试算例进行对比分析。结果表明所提模型能够充分考虑电网承载能力，获得经济效益更优、投资回收期更短的共享储能选址定容方案。
+Abstract
+Shared energy storage is an effective measure to improve the efficiency of energy storage and play the synergistic advantages of micro-energy grid clusters, however, most of the existing studies have simplified the energy transmission channel between shared energy storage and micro-energy network clusters into a bus structure, which has problems such as 'fixed capacity’ but not 'siting’, insufficient utilisation of shared energy storage after configuration, and so on. There are problems such as only 'capacity-setting’ but not 'siting’ and insufficient utilisation of shared energy storage after configuration. In this context, a two-layer optimal configuration model of shared energy storage for micro-energy grid clusters is established, taking into account the carrying capacity of the power grid. Firstly, a two-layer configuration model of shared energy storage for micro-energy grid clusters is established: the upper model takes the minimisation of the operating cost of the power grid and the shared energy storage planning as the goal, and optimises the decision-making of the location and capacity of the shared energy storage by taking into account the carrying capacity of the power grid; the lower model takes the minimisation of the operating cost of the micro-energy grid as the goal, and optimises the solution to the micro-energy grid operation problem. Secondly, the lower-layer model is converted into the constraints of the upper-layer model based on the KKT condition, and the two-layer optimal allocation model is converted into a single-layer optimisation problem. Finally, a comparative analysis is conducted using a test case containing three micro-energy grids. The results show that the proposed model can fully consider the carrying capacity of the grid and obtain a shared energy storage siting and capacity-setting scheme with better economic benefits and shorter payback period.
+关键词
+微能源网
+/
+共享储能
+/
+电网承载能力
+/
+双层优化配置
+/
+集群
+Key words
+micro energy grids
+/
+shared energy storage
+/
+grid carrying capacity
+/
+bi-layer optimal allocation
+/
+cluster
+引用本文
+EndNote
+Ris (Procite)
+Bibtex
+导出引用
+江璐
+,
+万忠杨
+,
+单体华
+,
+等
+.
+考虑电网承载能力的微能源网集群共享储能双层优化配置[J].
+分布式能源
+, 2024, 9(6): 56-64 https://doi.org/10.16513/j.2096-2185.DE.2409607.
+Lu JIANG
+,
+Zhongyang WAN
+,
+Tihua SHAN
+,
+et al
+.
+Bilevel Optimal Allocation of Micro-Energy Grid Cluster Sharing Energy Storage Considering Grid Carrying Capacity[J].
+Distributed Energy
+, 2024, 9(6): 56-64 https://doi.org/10.16513/j.2096-2185.DE.2409607.
+中图分类号：
+TK02
+参考文献
+列表(
+原文顺序
+|
+文献年度倒序
+|
+文中引用次数倒序
+)
+可视化分析
+[1]
+陈海生，李泓，徐玉杰，等. 2023年中国储能技术研究进展[J].
+储能科学与技术
+，
+2024
+,
+13
+(5): 1359-1397.
+CHEN
+Haisheng
+,
+LI
+Hong
+,
+XU
+Yujie
+, et al. Research progress on energy storage technologies of China in 2023[J].
+Energy Storage Science and Technology
+,
+2024
+,
+13
+(5): 1359-1397.
+本文引用 [1]
+[2]
+任洪波，张宇晨，吴琼，等. 面向韧性提升的综合能源系统规划与运行调度研究综述[J/OL].
+电力系统自动化
+，1-16[2024-07-14].
+http://kns.cnki.net/kcms/detail/32.1180.TP.20240604.1438.010.html
+REN
+Hongbo
+,
+ZHANG
+Yuchen
+,
+WU
+Qiong
+, et al. Research review on planning and operation dispatch of integrated energy system for resilience enhancement[J/OL].
+Automation of Electric Power Systems
+, 1-16[2024-07-14].
+http://kns.cnki.net/kcms/detail/32.1180.TP.20240604.1438.010.html
+本文引用 [1]
+[3]
+吴奎华，李文升，吴肇赟，等. 基于交替方向乘子的多能互补微电网分布式最优潮流调度[J].
+电网与清洁能源
+，
+2022
+,
+38
+(11): 35-44.
+WU
+Kuihua
+,
+LI
+Wensheng
+,
+WU
+Zhaoyun
+, et al. Distributed optimal power flow dispatch of multi-energy complementary microgrid based on alternating direction multiplier[J].
+Power System and Clean Energy
+,
+2022
+,
+38
+(11): 35-44.
+本文引用 [1]
+[4]
+李承周，王宁玲，窦潇潇，等. 多能源互补分布式能源系统集成研究综述及展望[J].
+中国电机工程学报
+，
+2023
+,
+43
+(18): 7127-7150.
+LI
+Chengzhou
+,
+WANG
+Ningling
+,
+DOU
+Xiaoxiao
+, et al. Review and prospect on the system integration of distributed energy system with the complementation of multiple energy sources[J].
+Proceedings of the CSEE
+,
+2023
+,
+43
+(18): 7127-7150.
+本文引用 [1]
+[5]
+李蕊睿，李奇，蒲雨辰，等. 计及功率交互约束的含电—氢混合储能的多微电网系统容量优化配置[J].
+电力系统保护与控制
+，
+2022
+,
+50
+(14): 53-64.
+LI
+Ruirui
+,
+LI
+Qi
+,
+PU
+Yuchen
+, et al. Optimal configuration of an electric-hydrogen hybrid energy storage multi-microgrid system considering power interaction constraints[J].
+Power System Protection and Control
+,
+2022
+,
+50
+(14): 53-64.
+本文引用 [1]
+[6]
+杨晓辉，袁志鑫，肖锦扬，等. 考虑电池寿命的混合储能微电网优化配置[J].
+电力系统保护与控制
+，
+2023
+,
+51
+(4): 22-31.
+YANG
+Xiaohui
+,
+YUAN
+Zhixin
+,
+XIAO
+Jinyang
+, et al. Optimal configuration of hybrid energy storage microgrid considering battery life[J].
+Power System Protection and Control
+,
+2023
+,
+51
+(4): 22-31.
+本文引用 [1]
+[7]
+王涛，钟浩，李世春，等. 基于主从博弈的多微电网储能容量优化配置[J].
+智慧电力
+，
+2023
+,
+51
+(1): 9-15, 68.
+WANG
+Tao
+,
+ZHONG
+Hao
+,
+LI
+Shichun
+, et al. Optimal allocation of energy storage capacity in multi-microgrid based on master-slave game[J].
+Smart Power
+,
+2023
+,
+51
+(1): 9-15, 68.
+本文引用 [1]
+[8]
+乔露，王鲁杨，李唯嘉，等. 基于虚拟直流电机的分布式储能系统能量动态分配策略[J].
+现代电力
+，
+2024
+,
+41
+(3): 547-556.
+QIAO
+Lu
+,
+WANG
+Luyang
+,
+LI
+Weijia
+, et al. Energy dynamic allocation strategy of distributed energy storage system based on virtual DC machine[J].
+Modern Electric Power
+,
+2024
+,
+41
+(3): 547-556.
+本文引用 [1]
+[9]
+闫东翔，陈玥. 共享储能商业模式和定价机制研究综述[J].
+电力系统自动化
+，
+2022
+,
+46
+(23): 178-191.
+YAN
+Dongxiang
+,
+CHEN
+Yue
+. Review on business model and pricing mechanism for shared energy storage[J].
+Automation of Electric Power Systems
+,
+2022
+,
+46
+(23): 178-191.
+本文引用 [1]
+[10]
+张浩鹏，李泽宁，薛屹洵，等. 基于共享储能服务的智能楼宇双层优化配置[J/OL].
+中国电机工程学报
+，1-12[2024-06-05].
+http://kns.cnki.net/kcms/detail/11.2107.TM.20240402.1440.024.html
+ZHANG
+Haopeng
+,
+LI
+Zening
+,
+XUE
+Yixun
+, et al. Bi-level optimal configuration of intelligent buildings based on shared energy storage services[J/OL].
+Proceedings of the CSEE
+, 1-12[2024-06-05].
+http://kns.cnki.net/kcms/detail/11.2107.TM.20240402.1440.024.html
+本文引用 [1]
+[11]
+高伟凯，何川，刘天琪，等. 考虑微电网联盟协调运行的用户侧共享储能多计费方式博弈定价方法[J].
+电力自动化设备
+，
+2024
+,
+44
+(9): 16-23.
+GAO
+Weikai
+,
+HE
+Chuan
+,
+LIU
+Tianqi
+, et al. Multi-package game pricing method of user-side shared energy storage considering coordinated operation of microgrid alliance[J].
+Electric Power Automation Equipment
+,
+2024
+,
+44
+(9): 16-23.
+本文引用 [2]
+[12]
+王娟，曾国辉，黄勃，等. 考虑退役电池梯次利用的多微网共享储能优化配置[J/OL].
+电源学报
+，1-12[2024-06-04].
+http://kns.cnki.net/kcms/detail/12.1420.tm.20230720.1459.002.html
+WANG
+Juan
+,
+ZENG
+Guohui
+,
+HUANG
+Bo
+, et al. The optimization configuration of multi-micro grid shared energy storage considering the echelon utilization of retired batteries[J/OL].
+Journal of Power Supply
+, 1-12[2024-06-04].
+http://kns.cnki.net/kcms/detail/12.1420.tm.20230720.1459.002.html
+本文引用 [2]
+[13]
+谢雨龙，罗逸飏，李智威，等. 考虑微网新能源经济消纳的共享储能优化配置[J].
+高电压技术
+，
+2022
+,
+48
+(11): 4403-4413.
+XIE
+Yulong
+,
+LUO
+Yiyang
+,
+LI
+Zhiwei
+, et al. Optimal allocation of shared energy storage considering the economic consumption of microgrid new energy[J].
+High Voltage Engineering
+,
+2022
+,
+48
+(11): 4403-4413.
+本文引用 [2]
+[14]
+杨昆，刘通，柏林，等. 基于谈判博弈的微电网群多主体共享储能容量优化配置策略[J].
+电测与仪表
+，
+2024
+,
+61
+(3): 33-41.
+YANG
+Kun
+,
+LIU
+Tong
+,
+BAI
+Lin
+, et al. Optimal configuration strategy of shared energy storage capacity for micro-grid cluster based on multi-party bargaining game[J].
+Electrical Measurement & Instrumentation
+,
+2024
+,
+61
+(3): 33-41.
+本文引用 [2]
+[15]
+茆美琴，丁勇，王杨洋，等. 微网：未来能源互联网系统中的“有机细胞”[J].
+电力系统自动化
+，
+2017
+,
+41
+(19): 1-11, 45.
+MAO
+Meiqin
+,
+DING
+Yong
+,
+WANG
+Yangyang
+, et al. Microgrid—An “organic cell” for future energy interconnection system[J].
+Automation of Electric Power Systems
+,
+2017
+,
+41
+(19): 1-11, 45.
+本文引用 [1]
+[16]
+石浩杰，熊厚博，张笑演，等. 考虑多微网接入的气电-交通耦合系统分布式规划方法[J].
+电力系统自动化
+，
+2024
+,
+48
+(17): 66-76.
+SHI
+Haojie
+,
+XIONG
+Houbo
+,
+ZHANG
+Xiaoyan
+, et al. Distributed planning method for gas-electricity and transportation coupling system considering multi-microgrid integration[J].
+Automation of Electric Power Systems
+,
+2024
+,
+48
+(17): 66-76.
+本文引用 [1]
+[17]
+司方远，张宁，韩英华，等. 面向多元灵活资源聚合的区域综合能源系统主动调节能力评估与优化：关键问题与研究架构[J].
+中国电机工程学报
+，
+2024
+,
+44
+(6): 2097-2119.
+SI
+Fangyuan
+,
+ZHANG
+Ning
+,
+HAN
+Yinghua
+, et al. Fundamental problems and research framework for assessment and optimization of the functional regulation capacity of the regional integrated energy system under the aggregation of diversified and flexible resources[J].
+Proceedings of the CSEE
+,
+2024
+,
+44
+(6): 2097-2119.
+本文引用 [1]
+[18]
+李捷，余涛，潘振宁. 基于强化学习的增量配电网实时随机调度方法[J].
+电网技术
+，
+2020
+,
+44
+(9): 3321-3332.
+LI
+Jie
+,
+YU
+Tao
+,
+PAN
+Zhenning
+. Real-time stochastic dispatch method for incremental distribution network based on reinforcement learning[J].
+Power System Technology
+,
+2020
+,
+44
+(9): 3321-3332.
+本文引用 [1]
+[19]
+BARAN
+M E
+,
+WU
+F F
+. Network reconfiguration in distribution systems for loss reduction and load balancing[J].
+IEEE Transactions on Power Delivery
+,
+1989
+,
+4
+(2): 1401-1407.
+本文引用 [2]
+[20]
+ZHANG
+H
+,
+WU
+Q
+,
+CHEN
+J
+, et al. Multiple stage stochastic planning of integrated electricity and gas system based on distributed approximate dynamic programming[J].
+Energy
+,
+2023
+,
+270
+: 126892.
+本文引用 [1]
+[21]
+罗雪梅，马昕峥，张淑，等. 计及电能质量全指标的承载力评估方法[J].
+科技创新与应用
+，
+2024
+,
+14
+(27): 158-162.
+本文引用 [1]
+[22]
+SINHA
+A
+,
+SOUN
+T
+,
+DEB
+K
+. Using Karush-Kuhn-Tucker proximity measure for solving bilevel optimization problems[J].
+Swarm and Evolutionary Computation
+,
+2019
+,
+44
+: 496-510.
+本文引用 [1]
+[23]
+LI
+L
+,
+MU
+H
+,
+LI
+N
+, et al. Analysis of the integrated performance and redundant energy of CCHP systems under different operation strategies[J].
+Energy and Buildings
+,
+2015
+,
+99
+: 231-242.
+本文引用 [1]
+文章年度分布
+文献类型分布
+被引期刊分布
+被引用学者
+基金
+国网冀北电力有限公司科技项目(B3018F240006)
+×
+微信扫一扫
+PDF(1920 KB)
+可视化
+Accesses
+Citation
+Altmetric
+Detail
+段落导航
+相关文章
+版权所有 © 《分布式能源》编辑部
+地址：北京市石景山区银河财智中心1号楼B座
+邮编：100040
+电话：010-80732111
+E-mail：fbshny@cdt-kxjs.com
+技术支持：
+北京玛格泰克科技发展有限公司
+订阅号
+服务号
+/
+〈
+〉

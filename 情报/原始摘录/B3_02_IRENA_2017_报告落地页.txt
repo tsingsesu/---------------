@@ -1,0 +1,10 @@
+# IRENA_2017_报告落地页
+URL: https://prod-cd.irena.org/publications/2017/Oct/Electricity-storage-and-renewables-costs-and-markets
+最终URL: https://prod-cd.irena.org/publications/2017/Oct/Electricity-storage-and-renewables-costs-and-markets
+访问时间: 2026-09-11 11:41:57
+HTTP: 403  代理: False  字节: 1892
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题2：同一报告的官方落地页（可引用的稳定URL）
+----------------------------------------------------------------------
+Error 403 - Forbidden
+The web app you have attempted to reach has blocked your access.

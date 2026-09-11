@@ -1,0 +1,12 @@
+# MDPI_Energies_瑞典住宅光伏加电池经济性
+URL: https://www.mdpi.com/1996-1073/18/21/5658
+最终URL: https://www.mdpi.com/1996-1073/18/21/5658
+访问时间: 2026-09-11 11:39:06
+HTTP: 403  代理: True  字节: 402
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题3：储能套利收益的可比量级（国外口径）
+----------------------------------------------------------------------
+Access Denied
+You don't have permission to access "http://www.mdpi.com/1996-1073/18/21/5658" on this server.
+Reference #18.b351cc17.1789097945.7a5b593f
+https://errors.edgesuite.net/18.b351cc17.1789097945.7a5b593f

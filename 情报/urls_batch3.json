@@ -1,0 +1,10 @@
+[
+  {"name": "IRENA_2017_电力储存与可再生能源成本与市场至2030", "url": "https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2017/Oct/IRENA_Electricity_Storage_Costs_2017.pdf", "note": "问题2：A级国际机构对锂电往返效率/循环寿命的取值"},
+  {"name": "IRENA_2017_报告落地页", "url": "https://prod-cd.irena.org/publications/2017/Oct/Electricity-storage-and-renewables-costs-and-markets", "note": "问题2：同一报告的官方落地页（可引用的稳定URL）"},
+  {"name": "北极星_中电联2023电化学储能电站平均转换效率86_82", "url": "https://news.bjx.com.cn/html/20240327/1368470.shtml", "note": "问题2：国内储能电站实测平均效率（对标本题eta^2=0.81）"},
+  {"name": "21世纪经济报道_中电联2023电化学储能电站平均转换效率86_82", "url": "https://www.21jingji.com/article/20240327/herald/e5559a445fa8837508816f501794c289.html", "note": "问题2：同一数据第二独立来源"},
+  {"name": "汉斯出版社_考虑灵活性资源的含氢能源微网优化调度", "url": "https://www.hanspub.org/journal/paperinformation?paperid=118689", "note": "问题1：中文期刊里微网优化调度的建模参数表"},
+  {"name": "Lazard_平准化储能成本LCOS", "url": "https://www.lazard.com/research-insights/levelized-cost-of-energyplus/", "note": "问题3：储能套利经济性的行业基准"},
+  {"name": "CNESA_行业资讯_储能政策动态", "url": "https://www.cnesa.org/m/information/detail/?column_id=1&id=7901", "note": "问题3：储能产业联盟的官方资讯"},
+  {"name": "储能网escn_锂离子电池", "url": "https://www.escn.com.cn/news/show-1741377.html", "note": "问题2：储能电池参数报道（C级，仅看做法）"}
+]

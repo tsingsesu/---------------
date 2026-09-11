@@ -1,0 +1,29 @@
+﻿COUNTS: 147
+FIRST10: ['����\\ʱ��', '0:10-0:20', '0:20-0:30', '0:30-0:40', '0:40-0:50', '0:50-1:00', '1:00-1:10', '1:10-1:20', '1:20-1:30', '1:30-1:40', '1:40-1:50']
+LAST5: ['23:40-23:50', '23:50-0:00+1', '0:00-0:10+1', 'ȫ�칺����', 'ȫ�칺���']
+=== ��ŵ��� 20 6
+    ('����', 'ʱ���', '�����', '�ŵ���', 'ʱ��', '������')
+    (datetime.datetime(2025, 2, 1, 0, 0), '0:00-4:00', None, None, datetime.time(0, 0), None)
+    (None, '4:00-8:00', None, None, '24:00', None)
+    (None, '8:00-12:00', None, None, None, None)
+    (None, '12:00-16:00', None, None, None, None)
+    (None, '16:00-20:00', None, None, None, None)
+    (None, '20:00-24:00', None, None, None, None)
+    (datetime.datetime(2025, 2, 2, 0, 0), '0:00-4:00', None, None, datetime.time(0, 0), None)
+    (None, '4:00-8:00', None, None, '24:00', None)
+    (None, '8:00-12:00', None, None, None, None)
+    (None, '12:00-16:00', None, None, None, None)
+    (None, '16:00-20:00', None, None, None, None)
+    (None, '20:00-24:00', None, None, None, None)
+python.exe : Traceback (most recent call last):
+At line:18 char:1
++ & $py _phase0\_p5c.py 2>&1 | Out-File -Encoding utf8 _phase0\报告09_res ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\lhl87\Desktop\�߽��籭ȫ����ѧ����ѧ��ģ����\_phase0\_p5c.py", line 13, in <module>
+    print("   ", r)
+    ~~~~~^^^^^^^^^^
+UnicodeEncodeError: 'gbk' codec can't encode character '\u205d' in position 2: illegal multibyte sequence
+    

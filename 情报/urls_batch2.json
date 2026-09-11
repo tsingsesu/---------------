@@ -1,0 +1,12 @@
+[
+  {"name": "江苏省发改委_优化工商业分时电价结构通知_2025", "url": "https://fzggw.jiangsu.gov.cn/art/2025/4/30/art_84097_11557100.html", "note": "问题4：省级官方TOU时段与浮动比例"},
+  {"name": "东莞市发改局_进一步完善我省峰谷分时电价政策_广东", "url": "http://dgdp.dg.gov.cn/zwgk/zfxxgkml/zcwj/qtwj/content/post_4385587.html", "note": "问题4：广东峰谷时段与价差（第二省份官方口径）"},
+  {"name": "清华_der期刊_考虑电网承载能力的微能源网集群共享储能双层优化配置", "url": "http://der.tsinghuajournals.com/CN/abstract/abstract158137.shtml", "note": "问题1：国内微能源网+共享储能双层优化的建模范式与分时电价参数"},
+  {"name": "beei_先进储能技术综述", "url": "https://www.beei.org/index.php/EEI/article/view/4864/0", "note": "问题2：储能技术参数（效率/寿命/DoD）综述"},
+  {"name": "x-mol_MPC_储能最小化电费_JournalOfEnergyStorage", "url": "https://www.x-mol.com/paper/1894233254801268736", "note": "问题1：MPC 范式在储能最小化电费问题中的应用"},
+  {"name": "spc标准服务网_电化学储能电站运行指标及评价_GBT36549", "url": "https://www.spc.org.cn/online/1a153ae5dd397de17f08819bc3e8e289.html", "note": "问题2：储能电站运行指标（含效率）国家标准"},
+  {"name": "北极星_电化学储能电站运行指标及评价_标准解读", "url": "https://m.bjx.com.cn/mnews/20180806/918490.shtml", "note": "问题2：同上标准的可读解读（C级，仅看做法）"},
+  {"name": "中国智能电网_广东峰谷价差0.7905元每kWh", "url": "http://m.chinasmartgrid.com.cn/mnews/20250515/660571.shtml", "note": "问题4：省级峰谷价差的实测数值（C级，需交叉验证）"},
+  {"name": "国网江苏_分时电价文件PDF", "url": "http://www.js.sgcc.com.cn/html/files/2025-06/09/20250609174424240972841.pdf", "note": "问题4：江苏分时电价实施细则（PDF）"},
+  {"name": "MDPI_Energies_微网能量管理策略综述_能源三元悖论视角", "url": "https://www.mdpi.com/1996-1073/16/1/289", "note": "问题1：范式综述（若403则记录失败）"}
+]

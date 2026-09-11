@@ -1,0 +1,12 @@
+# MDPI_Energies_微网能量管理决策方法综述
+URL: https://www.mdpi.com/1996-1073/19/15/3560
+最终URL: https://www.mdpi.com/1996-1073/19/15/3560
+访问时间: 2026-09-11 11:39:05
+HTTP: 403  代理: True  字节: 400
+抓取方式: 正文抓取（requests+bs4+lxml）
+用途: 问题1：范式分布（LP/MILP/随机/鲁棒/MPC）
+----------------------------------------------------------------------
+Access Denied
+You don't have permission to access "http://www.mdpi.com/1996-1073/19/15/3560" on this server.
+Reference #18.93d43b17.1789097944.1d02560
+https://errors.edgesuite.net/18.93d43b17.1789097944.1d02560
