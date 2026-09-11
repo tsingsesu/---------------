@@ -253,7 +253,7 @@ def run_s1(price, load, pv, base):
                           round(r["Emin"], ND), round(r["Emax"], ND),
                           round(r["pvonly"], ND), round(r["gain"], ND),
                           r["flip"], r["note"]])
-    note_sheet = [["判据", "若该档扰动后"优化费用 ≥ 同扰动下的方案B费用"（储能净收益≤0），判定为结论翻转；否则未翻转。"],
+    note_sheet = [["判据", "若该档扰动后“优化费用 ≥ 同扰动下的方案B费用”（储能净收益≤0），判定为结论翻转；否则未翻转。"],
                   ["基准", "主模型：E_0=E_144=6000 kWh、单向 η=0.9、P̄=5000 kW、Ē−E̲=9600 kWh（1200–10800）"],
                   ["基准费用", "%.4f 元；方案B（不储能）= %.4f 元" % (base_cost, base_pv_only)],
                   ["效率档说明", "η 档位 = 0.9×(1−20%,−10%,−5%,0,+5%,+10%) 与上界外推档 1.08；η=1.08 越界，仅作参考"],
@@ -286,31 +286,27 @@ def run_s2(price, load, pv, base):
             c = eval_case(price, load, pv, eta=eta, p_max=p_max)
             cost_eta_pmax[i, j] = c["cost"]
             gain, verdict = judge_flip(c["cost"], base_pv_only)
-            rows.append([eta, eta ** 2, round(p_max, 1), None, None, None, None,
-                         round(c["cost"], ND), round(rel_pct(c["cost"], base_cost), ND),
-                         round(gain, ND), verdict])
+            rows.append([eta, eta ** 2, round(p_max, 1), round(c["cost"], ND),
+                         round(rel_pct(c["cost"], base_cost), ND), round(gain, ND), verdict])
         for j, fc in enumerate(CAP_FACTORS):
             half = CAP_HALF_BASE * fc
             e_min, e_max = E_INIT - half, E_INIT + half
             c = eval_case(price, load, pv, eta=eta, e_min=e_min, e_max=e_max)
             cost_eta_cap[i, j] = c["cost"]
             gain, verdict = judge_flip(c["cost"], base_pv_only)
-            rows.append([eta, eta ** 2, P_MAX, round(e_min, 1), round(e_max, 1),
-                         round(e_max - e_min, 1), round(100 * fc, 1),
-                         round(c["cost"], ND), round(rel_pct(c["cost"], base_cost), ND),
-                         round(gain, ND), verdict])
+            rows.append([eta, eta ** 2, round(e_max - e_min, 1), round(c["cost"], ND),
+                         round(rel_pct(c["cost"], base_cost), ND), round(gain, ND), verdict])
 
-    header = ["η（单向）", "往返 η²", "P̄_kW", "储电量下限_kWh", "储电量上限_kWh",
-              "Ē−E̲_kWh", "容量档_%", "费用_元", "费用相对基准变化_%",
-              "储能净收益_元", "结论是否翻转"]
+    header = ["η（单向）", "往返 η²", "同组变动参数值", "费用_元",
+              "费用相对基准变化_%", "储能净收益_元", "结论是否翻转"]
     note_sheet = [["网格", "η ∈ {0.72,0.81,0.855,0.9,0.945,0.99,1.08} × P̄ ∈ 5000×{0.8..1.2} × 容量区间半宽 ∈ 4800×{0.8..1.2}"],
                   ["切面1", "热力图左图：固定容量区间（Ē−E̲=9600 kWh，即 1200–10800），η × P̄ 的费用矩阵"],
                   ["切面2", "热力图右图：固定 P̄=5000 kW，η × 容量区间（半宽）的费用矩阵"],
                   ["判据", "储能净收益 = 同扰动下方案B费用 − 优化费用；≤0 记为结论翻转"],
                   ["基准费用", "%.4f 元；方案B = %.4f 元（基准口径）" % (base_cost, base_pv_only)],
                   ["最小值", "全部 %d 个网格点中费用最低 %.4f 元、最高 %.4f 元；净收益最小的网格点 %.4f 元"
-                   % (len(rows), min(r[7] for r in rows), max(r[7] for r in rows),
-                      min(r[9] for r in rows))]]
+                   % (len(rows), min(r[3] for r in rows), max(r[3] for r in rows),
+                      min(r[5] for r in rows))]]
     write_xlsx(XLSX_S2, [("网格扫描", header, rows), ("说明", ["条目", "内容"], note_sheet)])
 
     # ---- 热力图（两个切面） ----
@@ -435,13 +431,16 @@ def run_s3(price, load, pv, base):
                        "u": c["u_total"], "E_end": c["E_end"], "pvonly": pv_only_d,
                        "gain": gain, "flip": verdict})
     costs = np.array([s["cost"] for s in sample])      # 30 天费用数组，元
+    n_pos_day = sum(1 for s in sample if s["gain"] > 0)   # 储能净收益为正的天数
     rows.append({"group": "(e) 年内 30 天逐日重算", "case": "30 天费用分布（统计量见另表）",
                  "cost": float(costs.mean()), "rel": rel_pct(float(costs.mean()), base_cost),
                  "x": float(np.mean([s["x"] for s in sample])),
                  "u": float(np.mean([s["u"] for s in sample])),
                  "pvonly": float(np.mean([s["pvonly"] for s in sample])),
                  "gain": float(np.mean([s["gain"] for s in sample])),
-                 "flip": "未翻转（%d/30 天储能净收益为正）" % sum(1 for s in sample if s["gain"] > 0),
+                 "flip": ("未翻转（%d/%d 天储能净收益为正）" % (n_pos_day, N_SAMPLE_DAY))
+                         if n_pos_day == N_SAMPLE_DAY else
+                         ("部分天数翻转（%d/%d 天净收益为正）" % (n_pos_day, N_SAMPLE_DAY)),
                  "note": "抽 30 天（种子 %d）用附件2 实际负载/光伏、附件1 电价逐日重算" % RNG_SEED})
     print("  S3e 30 天：费用均值 %.4f 元（典型日 %.4f 元，%+.4f%%）；区间 [%.4f, %.4f]"
           % (costs.mean(), base_cost, rel_pct(float(costs.mean()), base_cost),
@@ -467,8 +466,8 @@ def run_s3(price, load, pv, base):
                    ["典型日费用_元（主模型）", round(base_cost, ND)],
                    ["均值相对典型日_%", round(rel_pct(float(costs.mean()), base_cost), ND)],
                    ["30 天中储能净收益为正的天数", int(sum(1 for s in sample if s["gain"] > 0))],
-                   ["说明", "该表用于检验"典型日"的代表性：逐日实际负载/光伏下的费用分布与典型日最优值的偏离"]]
-    note_sheet = [["判据", "若该档扰动后"优化费用 ≥ 同扰动下的方案B费用"，判定为结论翻转"],
+                   ["说明", "该表用于检验“典型日”的代表性：逐日实际负载/光伏下的费用分布与典型日最优值的偏离"]]
+    note_sheet = [["判据", "若该档扰动后“优化费用 ≥ 同扰动下的方案B费用”，判定为结论翻转"],
                   ["基准费用", "%.4f 元（典型日主模型）" % base_cost],
                   ["(d) 说明", "小时粒度模型把 24 个小时点作为 24 段、Δ=1 h；负载与光伏取小时均值，价格给出三种聚合方式的对照"],
                   ["(e) 说明", "价格沿用附件1（题设逐日相同）；负载/光伏取附件2 对应日的实际曲线；E_0=E_144=6000 kWh 逐日独立（端点锁定）"]]
@@ -476,7 +475,7 @@ def run_s3(price, load, pv, base):
                          ("30天抽样明细", ["日期", "费用_元", "购电量_kWh", "充电量_kWh",
                                             "24:00储电量_kWh", "方案B费用_元", "储能净收益_元",
                                             "结论是否翻转"], sample_rows),
-                         ("30天分布统计", stats_sheet),
+                         ("30天分布统计", stats_sheet[0], stats_sheet[1:]),
                          ("说明与判据", ["条目", "内容"], note_sheet)])
 
     # ---- 分布图 ----
@@ -801,7 +800,7 @@ def run_s5(price, load, pv, base):
         ["端点条件", "E_0=E_144=6000 kWh（主模型，端点锁定）",
          round(lock["cost"], ND), round(lock["x_total"], ND), round(lock["u_total"], ND),
          round(lock["v_total"], ND), round(lock["E_end"], ND), 0.0, 0.0,
-         "主口径；满足题目"0:00 与 24:00 储电量相同""],
+         "主口径；满足题目“0:00 与 24:00 储电量相同”"],
         ["端点条件", "端点自由（周期稳态最优，E_144 自由）",
          round(free["cost"], ND), round(free["x_total"], ND), round(free["u_total"], ND),
          round(free["v_total"], ND), round(free["E_end"], ND),
@@ -835,14 +834,15 @@ def run_s5(price, load, pv, base):
     x_csv = read_base_csv()["计划购电量_kWh"]      # 真实时段序的主模型购电量
     sheet2_rows = []
     for h in SPEC_HOURS:
-        k_y = hour_block_to_k(h)                   # 填法 Y：真实时段 6H+1
-        k_x = 6 * h - 1                            # 填法 X：模板逐位置 ⇒ 取真实时段 6H（0 基 6H−1）
+        k_y = hour_block_to_k(h)                   # 填法 Y：模板该行装真实时段 6H+1（轮转）
+        # 填法 X（逐位置）：模板第 i 行装当天第 i+1 个时段 ⇒ 标签 H:00-H:10 的模板行（0 基 6H−1）
+        # 装的是当天第 6H 个时段，故取 CSV 的 0 基下标 6H−1
         v_y = float(x_csv[k_y - 1])
-        v_x = float(x_csv[k_x - 1])
+        v_x = float(x_csv[6 * h - 1])
         sheet2_rows.append(["%2d:00-%2d:10" % (h, h), round(v_y, ND), round(v_x, ND),
                             round(v_x - v_y, ND),
                             round(100.0 * (v_x - v_y) / v_y, ND) if v_y > 1e-9 else "",
-                            "Y-轮转 = 第 %d 个时段；X = 第 %d 个时段" % (k_y, k_x + 1)])
+                            "Y-轮转 = 第 %d 个时段；X = 第 %d 个时段" % (k_y, 6 * h)])
     sheet2_rows.append(["全天合计", round(float(x_csv.sum()), ND), round(float(x_csv.sum()), ND),
                         0.0, 0.0, "两种填法只是把同样的 144 个数重排到不同行，全天总量与费用不变"])
     header2 = ["表1时段", "填法Y-轮转_kWh（已采用）", "填法X_kWh（逐位置对照）",
@@ -852,7 +852,7 @@ def run_s5(price, load, pv, base):
                   ["(a) 端点", "主模型 E_0=E_144=6000；对照端点自由（E_144 由优化决定，实测落在下限 1200）"],
                   ["(b) 效率", "题目未区分单向/往返：主口径单向 0.9（往返 0.81）；对照往返 0.9（单向 √0.9）"],
                   ["(c) 填法", "主口径填法 Y-轮转（D-01，用户团队确认）；对照填法 X（模板第 i 行填当天第 i 个时段）"],
-                  ["翻转判定", "上述口径变化均不改变"配置储能更经济"的结论：各口径费用都显著低于方案 B（%.4f 元）" % ANCHOR["pv_only"]]]
+                  ["翻转判定", "上述口径变化均不改变“配置储能更经济”的结论：各口径费用都显著低于方案 B（%.4f 元）" % ANCHOR["pv_only"]]]
     write_xlsx(XLSX_S5, [("端点与效率", header1, sheet1_rows),
                          ("填法对照_六时段", header2, sheet2_rows),
                          ("说明", ["条目", "内容"], note_sheet)])
@@ -884,19 +884,20 @@ def read_base_csv():
 # ============================== 交付清单 §四 的六张主图 ==============================
 
 
-def draw_main_figures(price, load, pv, base, s1_rows):
+def draw_main_figures(price, load, pv, base, s1_rows, s3_rows):
     """绘制交付清单 §四 要求的六张主图（中文、≥300 dpi、存 问题1/）。
 
-    输入：price/load/pv；base，基准案例；s1_rows，S1 结果（供参数扰动图）
+    输入：price/load/pv；base，基准案例；s1_rows，S1 结果（参数扰动图）；s3_rows，S3 结果（数据缩放面板）
     输出：list[str]，六张图路径
     """
     import matplotlib.pyplot as plt
 
     apply_chinese_style()
-    x_csv = read_base_csv()["计划购电量_kWh"]
-    u_csv = read_base_csv()["充电量_kWh"]
-    v_csv = read_base_csv()["放电量_kWh"]
-    e_csv = read_base_csv()["储电量_kWh"]           # 时段末储电量，E_1..E_144
+    cols = read_base_csv()                            # 读一次主模型逐时段结果，后续各图共用
+    x_csv = cols["计划购电量_kWh"]
+    u_csv = cols["充电量_kWh"]
+    v_csv = cols["放电量_kWh"]
+    e_csv = cols["储电量_kWh"]                        # 时段末储电量，E_1..E_144
     n = K                                           # 144
     hours = (np.arange(1, n + 1) - 0.5) / 6.0       # 各时段中点（小时）
     path_list = []
@@ -1050,14 +1051,15 @@ def draw_main_figures(price, load, pv, base, s1_rows):
     path_list.append(save_figure(fig, os.path.join(QDIR, "全天费用构成与基线对比.png")))
 
     # ---------- 图 6：灵敏度分析-参数扰动 ----------
-    path_list.append(draw_s1_figure(s1_rows, base["cost"]))
+    path_list.append(draw_s1_figure(s1_rows, s3_rows, base["cost"]))
     return path_list
 
 
-def draw_s1_figure(s1_rows, base_cost):
+def draw_s1_figure(s1_rows, s3_rows, base_cost):
     """画 S1 参数扰动图：四个面板（η、P̄、储电量区间、数据缩放）的费用曲线。
 
-    输入：s1_rows，list[dict]，S1 结果；base_cost，float，基准费用，元
+    输入：s1_rows，list[dict]，S1 结果；s3_rows，list[dict]，S3 结果（数据缩放面板）
+          base_cost，float，基准费用，元
     输出：str，图片路径
     """
     import matplotlib.pyplot as plt
@@ -1102,14 +1104,14 @@ def draw_s1_figure(s1_rows, base_cost):
     ax.plot(half, [r["cost"] for r in rows_c], "^-", color=COLOR_SOC, linewidth=2)
     style_panel(ax, "可用区间半宽（kWh，中点固定 6000）", "(Ē−E̲) 扰动：可用容量越大越省，全程不翻转")
 
-    # 面板 4：数据侧缩放（电价/负载/光伏）
+    # 面板 4：数据侧缩放（电价/负载/光伏，数据来自 S3 的 (a)(b)(c) 三组）
     ax = axes[1, 1]
-    for key, color, label in [("电价整体缩放", COLOR_PRICE, "电价缩放"),
-                              ("负载整体缩放", COLOR_LOAD, "负载缩放"),
-                              ("光伏整体缩放", COLOR_PV, "光伏缩放")]:
-        rr = [r for r in s1_rows if r["group"].startswith("(") and key[0:2] in r["group"]]
+    for prefix, color, label in [("(a) ", COLOR_PRICE, "电价缩放"),
+                                 ("(b) ", COLOR_LOAD, "负载缩放"),
+                                 ("(c) ", COLOR_PV, "光伏缩放")]:
+        rr = [r for r in s3_rows if r["group"].startswith(prefix)]
         if rr:
-            xs = [float(r["case"].split("×")[1]) for r in rr]
+            xs = [float(r["case"].split("×")[1]) for r in rr]     # 档位形如 "电价 ×0.80"
             ax.plot(xs, [r["cost"] for r in rr], "o-", color=color, linewidth=2, label=label)
     ax.axhline(base_cost, color=COLOR_REF, linestyle="--", linewidth=1.2,
                label="基准费用 %.0f 元" % base_cost)
@@ -1122,14 +1124,6 @@ def draw_s1_figure(s1_rows, base_cost):
     fig.suptitle("灵敏度分析：单因素参数扰动下的全天购电费（S1；方案B 线以上即为翻转区）", fontsize=14)
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     return save_figure(fig, PNG_S1)
-
-
-def draw_s1_figure_data(s3_rows, base_cost):
-    """兼容占位：数据扰动面板已在 draw_s1_figure 内合并，不再单独出图。"""
-    return None
-
-
-# ============================== 主流程 ==============================
 
 
 def main():
@@ -1150,22 +1144,22 @@ def main():
     print("-" * 78)
     s1_rows = run_s1(price, load, pv, base)
     print("-" * 78)
-    run_s2(price, load, pv, base)
+    s2 = run_s2(price, load, pv, base)
     print("-" * 78)
-    run_s3(price, load, pv, base)
+    s3 = run_s3(price, load, pv, base)
     print("-" * 78)
     run_s4(price, load, pv, base)
     print("-" * 78)
     run_s5(price, load, pv, base)
     print("-" * 78)
-    figs = draw_main_figures(price, load, pv, base, s1_rows)
+    figs = draw_main_figures(price, load, pv, base, s1_rows, s3["rows"])
     print("六张主图已落盘：")
     for p in figs:
         print("  %s" % p)
     print("=" * 78)
     print("全部灵敏度实验完成。结论汇总：")
     print("  S1：全部档位不翻转（费用始终低于方案 B %.4f 元）；η=1.08 为越界外推档" % pv_only)
-    print("  S2：63 个网格点均不翻转，储能净收益始终为正")
+    print("  S2：%d 个网格点均不翻转，储能净收益始终为正" % len(s2["rows"]))
     print("  S3：数据侧扰动全部不翻转；小时粒度重算与 30 天分布已量化")
     print("  S4：DP 随网格加密收敛到 LP；MATLAB/规则策略对照已落盘")
     print("  S5：端点/效率/填法三种口径对照已落盘，均不翻转")
