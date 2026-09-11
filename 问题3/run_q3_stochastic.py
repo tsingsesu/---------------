@@ -52,9 +52,11 @@ from lib.timegrid import DT_H, K
 from lib.xlsxio import r4
 
 QDIR = os.path.join(ROOT, "问题3")
+FIGDIR = os.path.join(ROOT, "图片", "问题3")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 XLSX_PATH = os.path.join(QDIR, "随机规划_期望与最坏情形.xlsx")
 LOG_PATH = os.path.join(QDIR, "随机规划运行日志.txt")
-FIG_PATH = os.path.join(QDIR, "随机规划与主模型对比图.png")
+FIG_PATH = os.path.join(FIGDIR, "随机规划与主模型对比图.png")
 
 SEED = 20260911                      # 固定随机种子（可复现）
 N_SCEN_DEFAULT = 30                  # 每日情景数（每情景 3 个阶段 LP）

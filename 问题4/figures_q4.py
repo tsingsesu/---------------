@@ -34,6 +34,8 @@ from lib.plotstyle import (COLOR_BUY, COLOR_CHG, COLOR_DIS, COLOR_LOAD, COLOR_PR
 from lib.timegrid import DT_H, K
 
 QDIR = os.path.join(ROOT, "问题4")
+FIGDIR = os.path.join(ROOT, "图片", "问题4")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 CSV_42 = os.path.join(QDIR, "全分辨率明细_4-2.csv")
 CSV_43 = os.path.join(QDIR, "全分辨率明细_4-3.csv")
 Q2_CSV = os.path.join(ROOT, "问题2", "逐日结果.csv")       # 固定电价 4-2 对照（只读）
@@ -96,7 +98,7 @@ def main():
     ax.set_title("附件4 逐日逐时段电价热力图（365 天 × 144 时段，%.4f–%.4f 元/kWh）\n"
                  "白色虚线为四个指定日期；日内形状逐日相同、跨天差异为乘性日因子"
                  % (pr4.min(), pr4.max()))
-    p1 = os.path.join(QDIR, "波动电价三维热力图.png")
+    p1 = os.path.join(FIGDIR, "波动电价三维热力图.png")
     save_figure(fig, p1)
     print("已落盘：%s" % p1)
 
@@ -158,7 +160,7 @@ def main():
     ax2.legend(fontsize=10)
     fig.suptitle("固定电价（附件1）与波动电价（附件4）结果对比：四个指定日期", fontsize=14)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
-    p2 = os.path.join(QDIR, "固定电价与波动电价结果对比.png")
+    p2 = os.path.join(FIGDIR, "固定电价与波动电价结果对比.png")
     save_figure(fig, p2)
     print("已落盘：%s" % p2)
 
@@ -188,7 +190,7 @@ def main():
     fig.suptitle("波动电价下 4-3 的计划购电量 $x$ 与最终购电量 $y$（四个指定日期；虚线为 6/12/18 调整时刻）",
                  fontsize=14)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
-    p3 = os.path.join(QDIR, "波动电价下计划与调整购电量图.png")
+    p3 = os.path.join(FIGDIR, "波动电价下计划与调整购电量图.png")
     save_figure(fig, p3)
     print("已落盘：%s" % p3)
 
@@ -224,7 +226,7 @@ def main():
     ax2.legend(fontsize=10)
     fig.suptitle("波动电价下的储能运行（附件4 + D-10 终端余值）", fontsize=14)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
-    p4 = os.path.join(QDIR, "波动电价下储电量轨迹图.png")
+    p4 = os.path.join(FIGDIR, "波动电价下储电量轨迹图.png")
     save_figure(fig, p4)
     print("已落盘：%s" % p4)
     print("四张主图绘制完成。")

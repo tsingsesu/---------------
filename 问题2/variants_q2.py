@@ -38,6 +38,8 @@ from lib.storage import E_INIT, E_MAX, E_MIN, ETA, P_MAX
 from lib.timegrid import DT_H, K
 
 QDIR = os.path.join(ROOT, "问题2")
+FIGDIR = os.path.join(ROOT, "图片", "问题2")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 XLSX_READING2 = os.path.join(QDIR, "备选读法②_汇总.xlsx")
 CSV_EMG2 = os.path.join(QDIR, "备选读法②_逐日紧急购电.csv")
 XLSX_VARIANT = os.path.join(QDIR, "口径对照_终端与读法.xlsx")
@@ -260,7 +262,7 @@ def draw_emergency_figure(res_r2, dates):
                  "偏离将产生紧急购电（电价 5 倍）；主模型（读法① 完全信息）下该机制不被触发（r≡0）",
                  fontsize=14)
     fig.tight_layout(rect=(0, 0, 1, 0.93))
-    return save_figure(fig, os.path.join(QDIR, "紧急购电量分布图.png"))
+    return save_figure(fig, os.path.join(FIGDIR, "紧急购电量分布图.png"))
 
 
 def main():

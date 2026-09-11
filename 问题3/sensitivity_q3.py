@@ -45,6 +45,8 @@ from lib.storage import E_INIT, E_MAX, E_MIN, ETA, P_MAX
 from lib.timegrid import DT_H, K
 
 QDIR = os.path.join(ROOT, "问题3")
+FIGDIR = os.path.join(ROOT, "图片", "问题3")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 LOG_PATH = os.path.join(QDIR, "灵敏度运行日志.txt")
 SEED = 20260911                       # 固定随机种子
 D_REP_FIRST = 31                      # 填报区间首日（0 基）
@@ -547,7 +549,7 @@ def draw_figures(s1_rows, s2_rows):
     fig.suptitle("问题 3 灵敏度 S1：关键参数 ±5%/±10%/±20% 对全年总费用（334 天）的影响",
                  fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
-    save_figure(fig, os.path.join(QDIR, "灵敏度分析_参数扰动.png"))
+    save_figure(fig, os.path.join(FIGDIR, "灵敏度分析_参数扰动.png"))
     # ---------------- S2：η × κ₊ 热力图（κ=5 切面）+ κ 响应 ----------------
     fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_WIDE)
     eta_set = sorted({_parse_tag(r["用例"])["η"] for r in s2_rows})
@@ -585,7 +587,7 @@ def draw_figures(s1_rows, s2_rows):
     axes[1].legend(fontsize=8, ncol=2)
     fig.suptitle("问题 3 灵敏度 S2：多因素组合扰动（η × κ₊ × κ，3×3×3 网格）", fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
-    save_figure(fig, os.path.join(QDIR, "灵敏度分析_多因素热力图.png"))
+    save_figure(fig, os.path.join(FIGDIR, "灵敏度分析_多因素热力图.png"))
 
 
 def main():

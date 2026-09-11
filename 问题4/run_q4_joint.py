@@ -42,9 +42,11 @@ from lib.storage import E_INIT, E_MAX, E_MIN, ETA, P_MAX, U_MAX
 from lib.timegrid import DT_H, K
 
 QDIR = os.path.join(ROOT, "问题4")
+FIGDIR = os.path.join(ROOT, "图片", "问题4")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 XLSX_PATH = os.path.join(QDIR, "联合LP下界_对照.xlsx")
 LOG_PATH = os.path.join(QDIR, "联合LP下界运行日志.txt")
-PNG_PREVIEW = os.path.join(QDIR, "全年联合LP下界预览.png")
+PNG_PREVIEW = os.path.join(FIGDIR, "全年联合LP下界预览.png")
 CSV_42 = os.path.join(QDIR, "全分辨率明细_4-2.csv")     # 逐日滚动解（run_q4.py 落盘）
 
 D_REP_FIRST = 31                                        # 填报区间首日 2025-02-01（0 基 31）

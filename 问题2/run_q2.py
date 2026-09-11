@@ -37,6 +37,8 @@ from lib.timegrid import (DT_H, K, four_hour_blocks, hour_block_to_k,
                           hour_block_to_template_row, k_to_label)
 
 QDIR = os.path.join(ROOT, "问题2")                                   # 问题 2 交付目录
+FIGDIR = os.path.join(ROOT, "图片", "问题2")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 TEMPLATE_XLSX = attach_path("附件5", "result2.xlsx")                 # 题目模板（只读）
 RESULT_XLSX = os.path.join(QDIR, "result2.xlsx")                     # 交付结果文件
 AUDIT_CSV = os.path.join(QDIR, "逐日结果.csv")                        # 全分辨率审计明细（334 天 × 全天 × 144 时段）
@@ -333,7 +335,7 @@ def draw_main_figures(price, load, pv_actual, dates, roll_rep):
     h1, l1 = ax.get_legend_handles_labels()
     h2, l2 = ax2.get_legend_handles_labels()
     ax.legend(h1 + h2, l1 + l2, loc="upper left")
-    save_figure(fig, os.path.join(QDIR, "全年逐日购电费与节省额.png"))
+    save_figure(fig, os.path.join(FIGDIR, "全年逐日购电费与节省额.png"))
 
     # ---------------- 图 2：四季典型日购电量与负载对比 ----------------
     fig, axes = plt.subplots(2, 2, figsize=FIGSIZE_TALL)
@@ -356,7 +358,7 @@ def draw_main_figures(price, load, pv_actual, dates, roll_rep):
         ax.set_xlim(0, 24)
     fig.suptitle("问题 2 四季典型日：计划购电量、负载与光伏对比（购电量按 Δ 折合为功率）", fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
-    save_figure(fig, os.path.join(QDIR, "四季典型日购电量与负载对比.png"))
+    save_figure(fig, os.path.join(FIGDIR, "四季典型日购电量与负载对比.png"))
 
     # ---------------- 图 3：储电量年度轨迹热力图 ----------------
     fig, ax = plt.subplots(figsize=FIGSIZE_WIDE)
@@ -373,7 +375,7 @@ def draw_main_figures(price, load, pv_actual, dates, roll_rep):
     ax.set_title("问题 2 储电量年度轨迹热力图（334 天 × 144 时段）\n"
                  "颜色越亮储电量越高；上下限参考值 %d / %d kWh；多数时段处于下限附近、"
                  "充电集中在日内低价窗" % (E_MIN, E_MAT_MAX))
-    save_figure(fig, os.path.join(QDIR, "储电量年度轨迹热力图.png"))
+    save_figure(fig, os.path.join(FIGDIR, "储电量年度轨迹热力图.png"))
 
     # ---------------- 图 4：全年购电费构成堆叠图（按月） ----------------
     months = [d.month for d in day_list]
@@ -406,7 +408,7 @@ def draw_main_figures(price, load, pv_actual, dates, roll_rep):
                     (base_day.sum() - cost_day.sum()) / 1e4,
                     100.0 * (base_day.sum() - cost_day.sum()) / base_day.sum()))
     ax.legend(loc="upper left")
-    save_figure(fig, os.path.join(QDIR, "全年购电费构成堆叠图.png"))
+    save_figure(fig, os.path.join(FIGDIR, "全年购电费构成堆叠图.png"))
 
 
 def main():

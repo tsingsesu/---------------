@@ -43,6 +43,8 @@ from lib.timegrid import DT_H, K
 from lib.xlsxio import r4, set_decimal_format  # noqa: F401（与全工作区同一套写出助手）
 
 QDIR = os.path.join(ROOT, "问题4")
+FIGDIR = os.path.join(ROOT, "图片", "问题4")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 LOG_PATH = os.path.join(QDIR, "灵敏度运行日志.txt")
 D_REP_FIRST = 31
 N_REP = 334
@@ -354,7 +356,7 @@ def draw_s1_figure(rows, base42, base43):
         ax.legend(fontsize=9)
     fig.suptitle("S1 关键参数扰动（S1 × 4-2/4-3）：η 最敏感、κ₋/κ₊/V_E 中等、P̄ 最迟钝", fontsize=13)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
-    return save_figure(fig, os.path.join(QDIR, "灵敏度分析_参数扰动.png"))
+    return save_figure(fig, os.path.join(FIGDIR, "灵敏度分析_参数扰动.png"))
 
 
 # ============================== S2 多因素组合扰动 ==============================
@@ -431,7 +433,7 @@ def draw_s2_heatmap(eta_lv, ve_lv, grid42, grid43):
         fig.colorbar(im, ax=ax, label="费用（万元）")
     fig.suptitle("S2 多因素组合扰动：η × V_E 网格（κ 只线性影响紧急费用、不改变决策）", fontsize=13)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
-    return save_figure(fig, os.path.join(QDIR, "灵敏度分析_多因素热力图.png"))
+    return save_figure(fig, os.path.join(FIGDIR, "灵敏度分析_多因素热力图.png"))
 
 
 # ============================== S3 数据侧扰动 ==============================

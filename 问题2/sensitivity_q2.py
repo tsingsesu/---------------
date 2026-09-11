@@ -33,6 +33,8 @@ import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 QDIR = os.path.join(ROOT, "问题2")
+FIGDIR = os.path.join(ROOT, "图片", "问题2")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 for _p in (ROOT, QDIR):
     if _p not in sys.path:
         sys.path.insert(0, _p)
@@ -56,10 +58,10 @@ XLSX_S2 = os.path.join(QDIR, "灵敏度分析_多因素网格.xlsx")
 XLSX_S3 = os.path.join(QDIR, "灵敏度分析_数据扰动.xlsx")
 XLSX_S4 = os.path.join(QDIR, "方法侧互验_联合LP与MATLAB与规则策略.xlsx")
 XLSX_S5 = os.path.join(QDIR, "口径对照_读法与终端与效率.xlsx")
-PNG_S1 = os.path.join(QDIR, "灵敏度分析_参数扰动.png")
-PNG_S2 = os.path.join(QDIR, "灵敏度分析_多因素热力图.png")
-PNG_S3 = os.path.join(QDIR, "灵敏度分析_数据扰动_逐日分布.png")
-PNG_S4 = os.path.join(QDIR, "方法侧互验_对照.png")
+PNG_S1 = os.path.join(FIGDIR, "灵敏度分析_参数扰动.png")
+PNG_S2 = os.path.join(FIGDIR, "灵敏度分析_多因素热力图.png")
+PNG_S3 = os.path.join(FIGDIR, "灵敏度分析_数据扰动_逐日分布.png")
+PNG_S4 = os.path.join(FIGDIR, "方法侧互验_对照.png")
 LOG_PATH = os.path.join(QDIR, "灵敏度运行日志.txt")
 
 ND = 4                                   # 小数位数（D-15）

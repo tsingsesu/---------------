@@ -21,4 +21,4 @@
 已落盘：C:\Users\lhl87\Desktop\高教社杯全国大学生数学建模大赛\问题2\备选读法②_汇总.xlsx
 已落盘：C:\Users\lhl87\Desktop\高教社杯全国大学生数学建模大赛\问题2\备选读法②_逐日紧急购电.csv
 已落盘：C:\Users\lhl87\Desktop\高教社杯全国大学生数学建模大赛\问题2\口径对照_终端与读法.xlsx
-已落盘：C:\Users\lhl87\Desktop\高教社杯全国大学生数学建模大赛\问题2\紧急购电量分布图.png
+已落盘：C:\Users\lhl87\Desktop\高教社杯全国大学生数学建模大赛\图片\问题2\紧急购电量分布图.png

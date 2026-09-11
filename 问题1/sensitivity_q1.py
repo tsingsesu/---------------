@@ -33,6 +33,8 @@ import sys
 # 把工作区根目录与问题1目录加入模块搜索路径，保证在任意工作目录下都能导入
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 QDIR = os.path.join(ROOT, "问题1")
+FIGDIR = os.path.join(ROOT, "图片", "问题1")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 for _p in (ROOT, QDIR):
     if _p not in sys.path:
         sys.path.insert(0, _p)
@@ -56,13 +58,13 @@ CSV_PATH = os.path.join(QDIR, "问题1_逐时段结果.csv")               # 主
 LOG_PATH = os.path.join(QDIR, "灵敏度运行日志.txt")                  # 本次运行日志
 XLSX_S1 = os.path.join(QDIR, "灵敏度分析_参数扰动.xlsx")             # S1 落盘
 XLSX_S2 = os.path.join(QDIR, "灵敏度分析_多因素网格.xlsx")           # S2 落盘
-PNG_S2 = os.path.join(QDIR, "灵敏度分析_多因素热力图.png")           # S2 图
+PNG_S2 = os.path.join(FIGDIR, "灵敏度分析_多因素热力图.png")           # S2 图
 XLSX_S3 = os.path.join(QDIR, "灵敏度分析_数据扰动.xlsx")             # S3 落盘
 XLSX_S4 = os.path.join(QDIR, "方法侧互验_DP与MATLAB与规则策略.xlsx")  # S4 落盘
 XLSX_S5 = os.path.join(QDIR, "口径对照_端点与效率与填法.xlsx")       # S5 落盘
-PNG_S1 = os.path.join(QDIR, "灵敏度分析_参数扰动.png")               # S1 图
-PNG_S3 = os.path.join(QDIR, "灵敏度分析_数据扰动_逐日分布.png")       # S3(e) 图
-PNG_S4 = os.path.join(QDIR, "方法侧互验_对照.png")                   # S4 图
+PNG_S1 = os.path.join(FIGDIR, "灵敏度分析_参数扰动.png")               # S1 图
+PNG_S3 = os.path.join(FIGDIR, "灵敏度分析_数据扰动_逐日分布.png")       # S3(e) 图
+PNG_S4 = os.path.join(FIGDIR, "方法侧互验_对照.png")                   # S4 图
 MATLAB_SUM = os.path.join(QDIR, "_matlab校验_q1_汇总.csv")           # MATLAB 复算汇总（可选）
 MATLAB_K = os.path.join(QDIR, "_matlab校验_q1_逐时段.csv")           # MATLAB 复算逐时段（可选）
 
@@ -923,7 +925,7 @@ def draw_main_figures(price, load, pv, base, s1_rows, s3_rows):
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax1.legend(lines1 + lines2, labels1 + labels2, loc="upper left")
     ax1.set_title("典型日电价、负载与光伏曲线（附件1；虚线为表 1 的六个指定时段）")
-    path_list.append(save_figure(fig, os.path.join(QDIR, "典型日电价负载光伏曲线.png")))
+    path_list.append(save_figure(fig, os.path.join(FIGDIR, "典型日电价负载光伏曲线.png")))
 
     # ---------- 图 2：计划购电量与净负荷对比 ----------
     fig, ax = plt.subplots(figsize=FIGSIZE_WIDE)
@@ -944,7 +946,7 @@ def draw_main_figures(price, load, pv, base, s1_rows, s3_rows):
     ax.set_ylabel("功率（kW）")
     ax.set_title("计划购电量与净负荷对比（购电量柱高 = x/Δ；净负荷为负值时购电量为 0）")
     ax.legend(loc="upper right")
-    path_list.append(save_figure(fig, os.path.join(QDIR, "计划购电量与净负荷对比.png")))
+    path_list.append(save_figure(fig, os.path.join(FIGDIR, "计划购电量与净负荷对比.png")))
 
     # ---------- 图 3：储电量轨迹与电价叠加 ----------
     fig, ax1 = plt.subplots(figsize=FIGSIZE_WIDE)
@@ -989,7 +991,7 @@ def draw_main_figures(price, load, pv, base, s1_rows, s3_rows):
     ax1.set_ylabel("储电量（kWh）", color=COLOR_SOC)
     ax2.set_ylabel("电价（元/kWh）", color=COLOR_PRICE)
     ax1.set_title("储电量轨迹与电价叠加（背景按电价分档着色：谷段充电、峰段放电）")
-    path_list.append(save_figure(fig, os.path.join(QDIR, "储电量轨迹与电价叠加.png")))
+    path_list.append(save_figure(fig, os.path.join(FIGDIR, "储电量轨迹与电价叠加.png")))
 
     # ---------- 图 4：充放电功率与电价关系散点图 ----------
     fig, ax = plt.subplots(figsize=FIGSIZE_WIDE)
@@ -1012,7 +1014,7 @@ def draw_main_figures(price, load, pv, base, s1_rows, s3_rows):
     ax.set_ylim(-5400, 5400)
     ax.set_title("充放电功率与电价关系散点图（低电价充电、高电价放电的阈值结构）")
     ax.legend(loc="lower left")
-    path_list.append(save_figure(fig, os.path.join(QDIR, "充放电功率与电价关系散点图.png")))
+    path_list.append(save_figure(fig, os.path.join(FIGDIR, "充放电功率与电价关系散点图.png")))
 
     # ---------- 图 5：全天费用构成与基线对比 ----------
     base_costs_all = baseline_costs(price, load, pv)
@@ -1048,7 +1050,7 @@ def draw_main_figures(price, load, pv, base, s1_rows, s3_rows):
     ax.set_ylabel("全天购电量（kWh）")
     ax.set_title("购电量对比：光伏消纳 + 储能充放的结构")
     fig.tight_layout()
-    path_list.append(save_figure(fig, os.path.join(QDIR, "全天费用构成与基线对比.png")))
+    path_list.append(save_figure(fig, os.path.join(FIGDIR, "全天费用构成与基线对比.png")))
 
     # ---------- 图 6：灵敏度分析-参数扰动 ----------
     path_list.append(draw_s1_figure(s1_rows, s3_rows, base["cost"]))

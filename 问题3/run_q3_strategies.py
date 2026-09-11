@@ -39,10 +39,12 @@ from lib.run_days import solve_rolling_staged
 from lib.storage import E_INIT
 
 QDIR = os.path.join(ROOT, "问题3")
+FIGDIR = os.path.join(ROOT, "图片", "问题3")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 LOG_PATH = os.path.join(QDIR, "策略对比运行日志.txt")
 XLSX_PATH = os.path.join(QDIR, "策略对比.xlsx")
 CSV_PATH = os.path.join(QDIR, "策略对比_逐日费用.csv")
-FIG_PATH = os.path.join(QDIR, "策略对比柱状图.png")
+FIG_PATH = os.path.join(FIGDIR, "策略对比柱状图.png")
 
 D_REP_FIRST = 31                       # 填报区间首日（0 基 31 = 2025-02-01）
 N_REP = 334                            # 填报区间天数

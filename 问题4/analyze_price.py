@@ -31,10 +31,12 @@ from lib.storage import ETA
 from lib.timegrid import K
 
 QDIR = os.path.join(ROOT, "问题4")
+FIGDIR = os.path.join(ROOT, "图片", "问题4")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 XLSX_PATH = os.path.join(QDIR, "电价结构统计.xlsx")
 LOG_PATH = os.path.join(QDIR, "电价结构分析运行日志.txt")
-FIG_FACTOR = os.path.join(QDIR, "电价日因子分布图.png")
-FIG_SPREAD = os.path.join(QDIR, "日内价差与跨天价差对比图.png")
+FIG_FACTOR = os.path.join(FIGDIR, "电价日因子分布图.png")
+FIG_SPREAD = os.path.join(FIGDIR, "日内价差与跨天价差对比图.png")
 
 THR_ARB = 1.0 / ETA ** 2        # 往返效率套利门槛 1/η² = 1.2346
 

@@ -33,6 +33,8 @@ from lib.plotstyle import (COLOR_BUY, COLOR_CHG, COLOR_DIS, COLOR_LOAD, COLOR_PR
 from lib.timegrid import K, hour_block_to_k, four_hour_blocks
 
 QDIR = os.path.join(ROOT, "问题3")
+FIGDIR = os.path.join(ROOT, "图片", "问题3")                        # 图片统一目录（2026-09-11 起，用户要求）
+os.makedirs(FIGDIR, exist_ok=True)                                # 确保目录存在（重跑时自动建）
 AUDIT_CSV = os.path.join(QDIR, "全分辨率明细.csv")
 D_REP_FIRST = 31
 N_REP = 334
@@ -93,7 +95,7 @@ def fig_forecast_vs_actual(d, pv_fc144):
     fig.suptitle("问题 3 预报与实际光伏对比：整点预报、分解后的 10 分钟预报与实际（四个指定日期）",
                  fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
-    save_figure(fig, os.path.join(QDIR, "预报与实际光伏对比图.png"))
+    save_figure(fig, os.path.join(FIGDIR, "预报与实际光伏对比图.png"))
 
 
 def fig_error_distribution(d, pv_fc144):
@@ -130,7 +132,7 @@ def fig_error_distribution(d, pv_fc144):
     axes[1].set_title("(b) 0:00 预报的整点 RMSE 随提前期变化\n（白天时段误差大，晨昏与时滞相关）")
     fig.suptitle("问题 3 预报误差分布（预报 − 实际）：按发布时刻与提前期", fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.93))
-    save_figure(fig, os.path.join(QDIR, "预报误差分布图.png"))
+    save_figure(fig, os.path.join(FIGDIR, "预报误差分布图.png"))
 
 
 def fig_plan_vs_adjust(d):
@@ -163,7 +165,7 @@ def fig_plan_vs_adjust(d):
     fig.suptitle("问题 3 计划与调整购电量对比（0:00 计划 vs 最终生效；虚线为 6:00/12:00/18:00 分界）",
                  fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
-    save_figure(fig, os.path.join(QDIR, "计划与调整购电量对比图.png"))
+    save_figure(fig, os.path.join(FIGDIR, "计划与调整购电量对比图.png"))
 
 
 def fig_emergency_map(d):
@@ -200,7 +202,7 @@ def fig_emergency_map(d):
     h1, l1 = ax2.get_legend_handles_labels(); h2, l2 = axb.get_legend_handles_labels()
     ax2.legend(h1 + h2, l1 + l2, loc="upper left", fontsize=9)
     fig.tight_layout()
-    save_figure(fig, os.path.join(QDIR, "紧急购电时段分布图.png"))
+    save_figure(fig, os.path.join(FIGDIR, "紧急购电时段分布图.png"))
 
 
 def fig_soc_vs_error(d, pv_fc144):
@@ -234,7 +236,7 @@ def fig_soc_vs_error(d, pv_fc144):
         ax.set_xlim(0, 24)
     fig.suptitle("问题 3 储电量轨迹与预报误差叠加（四个指定日期）", fontsize=15)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
-    save_figure(fig, os.path.join(QDIR, "储电量轨迹与预报误差叠加.png"))
+    save_figure(fig, os.path.join(FIGDIR, "储电量轨迹与预报误差叠加.png"))
 
 
 def main():
