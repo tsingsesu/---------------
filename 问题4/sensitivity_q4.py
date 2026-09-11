@@ -90,7 +90,9 @@ def eval_42(price_mat, ve_arr, eta=ETA, p_max=P_MAX, d_start=0, e_init=E_INIT):
     roll = solve_rolling(price_mat, load=_G["load"], pv_actual=_G["pv"], e_init=e_init,
                          mode="free", eta=eta, p_max=p_max, v_end=ve_arr,
                          d_start=d_start, d_end=365)
-    sl = slice(max(d_start, D_REP_FIRST), 365)
+    # 填报区间切片：roll 的第 0 行对应第 d_start 天，故填报首日在其中的下标为
+    # max(d_start, 31) − d_start（d_start=0 时即 31，与 run_q4.py 一致）
+    sl = slice(max(d_start, D_REP_FIRST) - d_start, 365 - d_start)
     x = roll["x_plan"][sl]; E = roll["E_soc"][sl]; r = roll["r_emg"][sl]
     return {
         "total": float(roll["cost_day"][sl].sum()),
@@ -118,7 +120,8 @@ def eval_43(price_mat, ve_arr=None, eta=ETA, p_max=P_MAX, kappa=KAPPA_EMG,
                                 d_start=d_start, d_end=365, eta=eta, p_max=p_max,
                                 kappa=kappa, kappa_under=kappa_under,
                                 kappa_over=kappa_over, v_end_day=ve_arr)
-    sl = slice(max(d_start, D_REP_FIRST), 365)
+    # 填报区间切片：roll 的第 0 行对应第 d_start 天（与 eval_42 同一修正）
+    sl = slice(max(d_start, D_REP_FIRST) - d_start, 365 - d_start)
     E = roll["E_soc"][sl]
     return {
         "J": float(roll["J_day"][sl].sum()),
@@ -311,7 +314,7 @@ def run_s1(levels=(5, 10, 20)):
             r42 = eval_42(price_mat, ve_new)
             r43 = eval_43(price_mat, ve_new)
             add_row("V_E（终端余值单价）", "%+d%%" % (sgn * pct), r42, r43,
-                    "V_E 整体乘 (1±pct%%)，等价于按比例缩放余值")
+                    "V_E = 次日最低价/η 整体乘 (1%+d%%)，等价于按比例缩放余值" % (sgn * pct))
 
     path = os.path.join(QDIR, "灵敏度分析_参数扰动.xlsx")
     write_xlsx(path, {"S1_单因素扰动": [hdr] + rows})
@@ -463,7 +466,8 @@ def run_s3():
     ve_a = terminal_value_definitions(pr4_a)                   # 价格变了，余值重算
     r42 = eval_42(pr4_a, ve_a); r43 = eval_43(pr4_a, ve_a)
     add("(a) 剔除 9 个极端低价点（<0.05 元/kWh）", "%d 个点" % int(mask.sum()), r42, r43,
-        "被剔点替换为该日'附件1 形状×日因子'的结构值")
+        "被剔点替换为该日'附件1 形状×日因子'的结构值；零差异为结构性结论：9 个点全部落在"
+        "光伏富余、计划购电量 x=0 且充电已顶功率上限的时段，抬价不改变任何决策（单日核验见运行日志）")
 
     # ---- (b) 电价整体 ±5% / ±10% ----
     for pct in (5, 10):
